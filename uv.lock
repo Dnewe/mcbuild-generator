@@ -836,7 +836,7 @@ wheels = [
 ]
 
 [[package]]
-name = "mcbuildgen-scrapper"
+name = "mcbuild-generator"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

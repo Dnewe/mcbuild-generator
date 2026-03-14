@@ -1,4 +1,4 @@
-from block_embedding.utils.schem_utils import get_schem_blockdata
+from mcbuild_generator.processing.utils.schem_utils import get_schem_blockdata
 import nbtlib
 
 def test_get_schem_blockdata(schem_fp):
