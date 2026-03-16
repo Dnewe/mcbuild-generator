@@ -3,7 +3,7 @@ from mcbuild_generator.utils.args import get_config
 
 
 def pipeline(config):
-    extract_metadata(config['data_dir'], config['metadata_csv'], config['max_files'])
+    extract_metadata(config['data_dir'], config['max_files'])
 
 
 if __name__=='__main__':

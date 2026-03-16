@@ -11,7 +11,7 @@ def get_row(dir, fn):
     return {'id': _id, 'filepath': _fp}
 
 
-def extract_metadata(datadir:str, csvfp:str, max_files:int=-1):
+def extract_metadata(datadir:str, max_files:int=-1):
     '''
     Create CSV file containing metadata of build files.
 
@@ -29,4 +29,5 @@ def extract_metadata(datadir:str, csvfp:str, max_files:int=-1):
 
     rows = [get_row(datadir, fn) for fn in filenames]
 
+    csvfp = 'data/01_raw/metadata.csv'
     write_csv(rows, csvfp)

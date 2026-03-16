@@ -2,8 +2,5 @@
 # path to directory containing building files (.schem, ...)
 data_dir: 'data/01_raw/schem/'
 
-# save location of metadata.csv
-metadata_csv: 'data/01_raw/metadata.csv'
-
 # maximum number of files 
 max_files: 100
