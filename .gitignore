@@ -11,4 +11,4 @@ wheels/
 .venv
 
 # Data
-schem/
+*.schem
