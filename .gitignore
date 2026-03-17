@@ -13,5 +13,7 @@ wheels/
 
 # Data
 *.schem
+*.csv
+*.json
 
 # Cache
