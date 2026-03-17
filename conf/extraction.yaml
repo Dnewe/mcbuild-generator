@@ -1,6 +1,0 @@
-
-# path to directory containing building files (.schem, ...)
-data_dir: 'data/01_raw/schem/'
-
-# maximum number of files 
-max_files: -1

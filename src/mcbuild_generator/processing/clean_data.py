@@ -76,10 +76,10 @@ def clean_data(use_cache=True, multiproc=True):
     """
     Clean data by removing outliers
     """
-    builds = list(read_json(RAW_BUILDS_FP_JSON))
+    raw_builds_fp = list(read_json(RAW_BUILDS_FP_JSON))
 
     if not use_cache or not os.path.isfile(BUILDS_METADATA_CSV):
-        extract_metadata(builds, multiproc)
+        extract_metadata(raw_builds_fp, multiproc)
 
     metadata_df = pd.read_csv(BUILDS_METADATA_CSV)
 

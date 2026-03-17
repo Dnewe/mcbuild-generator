@@ -3,7 +3,7 @@ from mcbuild_generator.processing.transform_data import transform_data
 from mcbuild_generator.utils.args import get_config
 
 
-def pipeline(config):
+def pipeline_processing(config):
     """
     Data processing pipeline
     """
@@ -18,4 +18,4 @@ if __name__ == "__main__":
     config = get_config()
 
     # run
-    pipeline(config)
+    pipeline_processing(config['processing'])

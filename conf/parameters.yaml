@@ -1,0 +1,14 @@
+#-----------------#
+# HYPERPARAMETERS #
+#-----------------#
+
+
+### EXTRACTION PIPELINE
+extraction:
+  data_dir: 'data/01_raw/schem/'    # path to directory containing building files (.schem, ...)
+  max_files: 1000                   # maximum number of files 
+
+### PROCESSING PIPELINE
+processing:
+  use_cache: True
+  multiprocessing: True
