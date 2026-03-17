@@ -4,16 +4,16 @@ from mcbuild_generator.utils.args import get_config
 
 
 def pipeline(config):
-    '''
+    """
     Data processing pipeline
-    '''
-    print('\ncleaning data...')
-    clean_data(use_cache=config['use_cache'], multiproc=config['multiprocessing'])
-    print('\ntransforming data...')
+    """
+    print("\ncleaning data...")
+    clean_data(use_cache=config["use_cache"], multiproc=config["multiprocessing"])
+    print("\ntransforming data...")
     transform_data()
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
     # get args
     config = get_config()
 

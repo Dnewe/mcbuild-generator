@@ -3,11 +3,11 @@ from mcbuild_generator.utils.args import get_config
 
 
 def pipeline(config):
-    print('\nextracting filepaths...')
-    extract_filepaths(config['data_dir'], config['max_files'])
+    print("\nextracting filepaths...")
+    extract_filepaths(config["data_dir"], config["max_files"])
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
     # get args
     config = get_config()
 

@@ -22,13 +22,15 @@ def decode_varints(data, expected_size):
 
 
 def get_schem_blockdata(schem: nbtlib.File) -> np.ndarray:
-    version = schem['Version']
-    blockdata = schem['BlockData']
-    
+    version = schem["Version"]
+    blockdata = schem["BlockData"]
+
     w, h, l = schem["Width"], schem["Height"], schem["Length"]
     size = w * h * l
-    if version ==1:
+    if version == 1:
         blocks = np.frombuffer(bytes(blockdata), dtype=np.uint8).astype(np.int32)
     else:
-        blocks = np.array(decode_varints(blockdata, size), dtype=np.int32).reshape((h, l, w))
+        blocks = np.array(decode_varints(blockdata, size), dtype=np.int32).reshape(
+            (h, l, w)
+        )
     return blocks
