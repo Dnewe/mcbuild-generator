@@ -15,6 +15,17 @@
                 "--config",
                 "conf/extraction.yaml"
             ]
+        },
+        {
+            "name": "Processing",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/mcbuild_generator/processing/pipeline.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config",
+                "conf/processing.yaml"
+            ]
         }
     ]
 }

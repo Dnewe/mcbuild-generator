@@ -1,9 +1,10 @@
-from mcbuild_generator.extraction.extract_metadata import extract_metadata
+from mcbuild_generator.extraction.extract_filepaths import extract_filepaths
 from mcbuild_generator.utils.args import get_config
 
 
 def pipeline(config):
-    extract_metadata(config['data_dir'], config['max_files'])
+    print('\nextracting filepaths...')
+    extract_filepaths(config['data_dir'], config['max_files'])
 
 
 if __name__=='__main__':

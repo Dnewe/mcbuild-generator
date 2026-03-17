@@ -5,7 +5,7 @@ from typing import Dict, List
 
 
 ### CSV
-def write_csv(rows:List[Dict], fp:str):
+def write_csv(fp:str, rows:List[Dict]):
     with open(fp, 'w', newline='') as f:
         w = csv.DictWriter(f, rows[0].keys())
         w.writeheader()
@@ -24,7 +24,7 @@ def read_json(fp: str) -> Dict|List:
         d = json.load(f)
     return d
 
-def write_json(data, fp: str) -> None:
+def write_json(fp: str, data) -> None:
     with open(fp, 'w') as f:
         json.dump(data, f, indent=4, sort_keys=True)
         
