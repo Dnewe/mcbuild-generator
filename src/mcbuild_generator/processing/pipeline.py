@@ -7,13 +7,13 @@ def pipeline_processing(config):
     """
     Data processing pipeline
     """
-    print("\ncleaning data...")
+    print("\nCleaning data...")
     clean_data(
         **config["cleaning"],
         use_cache=config["use_cache"],
         multiproc=config["multiprocessing"],
     )
-    print("\ntransforming data...")
+    print("\nTransforming data...")
     transform_data(
         **config["transformation"],
         use_cache=config["use_cache"],

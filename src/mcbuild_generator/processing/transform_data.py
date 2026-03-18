@@ -65,5 +65,5 @@ def transform_data(
     if not use_cache or schem_count != tensor_count:
         del_dir(PROCESSED_BUILDS_DIR)
         create_dir(PROCESSED_BUILDS_DIR)
-        print("Transforming schem into tensors")
+        print("\nTransforming schem into tensors...")
         convert_schems(clean_builds_fp, blocks_to_idx, multiproc)

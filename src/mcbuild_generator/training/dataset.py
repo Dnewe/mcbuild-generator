@@ -25,7 +25,7 @@ def custom_collate_fn(batch):
     return list(batch)
 
 
-def get_dataset(train_val_split:List[float] = [0.8, 0.2]):
+def get_dataset(train_val_split: List[float] = [0.8, 0.2]):
     filepaths = [
         os.path.join(PROCESSED_BUILDS_DIR, fn)
         for fn in os.listdir(PROCESSED_BUILDS_DIR)
@@ -33,13 +33,11 @@ def get_dataset(train_val_split:List[float] = [0.8, 0.2]):
     ]
     dataset = BuildDataset(filepaths)
 
-    train_dataset, val_dataset = random_split(
-        dataset, lengths=train_val_split
-    )
+    train_dataset, val_dataset = random_split(dataset, lengths=train_val_split)
     return train_dataset, val_dataset
 
 
-def get_loaders(train_val_split:List[float], batch_size:int, num_workers:int=0):
+def get_loaders(train_val_split: List[float], batch_size: int, num_workers: int = 0):
     train_dataset, val_dataset = get_dataset(train_val_split)
 
     train_loader = DataLoader(
@@ -47,13 +45,13 @@ def get_loaders(train_val_split:List[float], batch_size:int, num_workers:int=0):
         batch_size=batch_size,
         collate_fn=custom_collate_fn,
         shuffle=True,
-        num_workers=num_workers
+        num_workers=num_workers,
     )
     val_loader = DataLoader(
         dataset=val_dataset,
         batch_size=batch_size,
         collate_fn=custom_collate_fn,
         shuffle=True,
-        num_workers=num_workers
+        num_workers=num_workers,
     )
     return train_loader, val_loader

@@ -1,7 +1,7 @@
 from mcbuild_generator.utils.args import get_config
 
 # RETRIEVE RUN ID
-run_name = get_config()['run_name']
+run_name = get_config()["run_name"]
 
 # ------
 # DATA
@@ -28,3 +28,7 @@ IDX_TO_BLOCK_JSON = f"data/03_processed/idx_to_block_{run_name}.json"
 
 ### PROCESSED BUILDS
 PROCESSED_BUILDS_DIR = f"data/03_processed/builds_{run_name}"
+
+### TRAINING
+MODEL_FP = f"data/05_models/model_{run_name}.pth"
+LOSSES_PLOT_FP = f"data/06_reporting/losses_{run_name}.jpg"

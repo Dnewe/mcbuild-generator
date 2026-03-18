@@ -62,12 +62,13 @@ def filter_outliers(df: pd.DataFrame, columns: List[str], coeffs: List[int]):
         thresholds[col] = coeff * 1.4826 * MAD
 
     for col in columns:
+        previous_count = len(df_filtered)
         df_filtered = df_filtered[
             (df_filtered[col] - vol_median).abs() <= thresholds[col]
         ]
-        print(f"\nOutliers {col}:")
-        print(f"- threhold = {thresholds[col]:.2f}")
-        print(f"- removed  = {len(df) - len(df_filtered)}")
+        print(
+            f"- Outliers {col}: thresh= {thresholds[col]:.2f} ; removed= {previous_count - len(df_filtered)}"
+        )
 
     return df_filtered
 
@@ -102,22 +103,26 @@ def clean_data(
     """
     raw_builds_fp = list(read_json(RAW_BUILDS_FP_JSON))
 
-    if not use_cache or not os.path.isfile(BUILDS_METADATA_CSV):
+    if not os.path.isfile(BUILDS_METADATA_CSV):
+        print("\nExtracting metadata...")
         extract_metadata(raw_builds_fp, multiproc)
 
     metadata_df = pd.read_csv(BUILDS_METADATA_CSV)
 
+    print("\nFiltering outliers...")
     metadata_df_filtered = filter_outliers(
         metadata_df,
         ["volume", "width", "length", "height", "palettemax"],
         coeffs=[5, 5, 5, 5, 3],
     )
+    print("\nFiltering out of bonds...")
     metadata_df_filtered = filter_outofbonds(
         metadata_df_filtered, min_w, min_l, min_h, max_w, max_l, max_h
     )
 
     start_build_count = len(metadata_df)
     end_build_count = len(metadata_df_filtered)
+    print("\nFinished Data Cleaning")
     print(f"Pre-cleaning build count : {start_build_count}")
     print(f"Post-cleaning build count: {end_build_count}")
     print(f"Removed: {start_build_count - end_build_count}")

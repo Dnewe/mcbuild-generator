@@ -8,13 +8,13 @@ def pipeline_all(config):
     """
     Data processing pipeline
     """
-    print("\n\nExtracting data...")
+    print("\n\nEXTRACTION PIPELINE")
     pipeline_extraction(config["extraction"])
 
-    print("\n\nProcessing data...")
+    print("\n\nPROCESSING PIPELINE")
     pipeline_processing(config["processing"])
 
-    print("\n\nTrainig...")
+    print("\n\nTRAINING PIPELINE")
     pipeline_training(config["training"])
 
 
