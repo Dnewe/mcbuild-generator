@@ -25,4 +25,4 @@ BLOCK_TO_IDX_JSON = f"data/03_processed/block_to_idx_{RUN_NAME}.json"
 IDX_TO_BLOCK_JSON = f"data/03_processed/idx_to_block_{RUN_NAME}.json"
 
 ### PROCESSED BUILDS
-PROCESSED_BUILDS_DIR = f'data/03_processed/builds_{RUN_NAME}'
+PROCESSED_BUILDS_DIR = f"data/03_processed/builds_{RUN_NAME}"

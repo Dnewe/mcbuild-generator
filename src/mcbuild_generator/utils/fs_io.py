@@ -12,6 +12,7 @@ def create_dir(dir):
     except Exception as e:
         print(f"couldn't create dir at path {dir} \nerror: {e}")
 
+
 def del_dir(dir):
     if os.path.exists(dir):
         shutil.rmtree(dir)
@@ -36,6 +37,7 @@ def read_json(fp: str) -> Dict | List:
     with open(fp, "r") as f:
         d = json.load(f)
     return d
+
 
 def write_json(fp: str, data) -> None:
     with open(fp, "w") as f:

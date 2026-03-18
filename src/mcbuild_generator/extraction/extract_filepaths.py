@@ -12,7 +12,9 @@ def get_row(dir, fn):
     return {"id": _id, "filepath": _fp}
 
 
-def extract_filepaths(datadir: str, max_files: int = -1, extensions: List[str] = ['schem']):
+def extract_filepaths(
+    datadir: str, max_files: int = -1, extensions: List[str] = ["schem"]
+):
     """
     Create CSV file containing metadata of build files.
 
@@ -24,11 +26,11 @@ def extract_filepaths(datadir: str, max_files: int = -1, extensions: List[str] =
     filenames = os.listdir(datadir)
 
     # filter extensions
-    filenames = [fn for fn in filenames if fn.split('.')[-1] in extensions]
+    filenames = [fn for fn in filenames if fn.split(".")[-1] in extensions]
 
     # shuffle
     np.random.shuffle(filenames)
-    
+
     # slice
     if max_files > 0 and max_files < len(filenames):
         filenames = filenames[:max_files]

@@ -27,7 +27,7 @@ class Schem:
     @classmethod
     def load(cls, fp: str):
         schemfile = nbtlib.load(fp)
-        id = os.path.basename(fp).split('.')[0]
+        id = os.path.basename(fp).split(".")[0]
         return cls(schemfile, id)
 
     def get_blockdata(self) -> np.ndarray:

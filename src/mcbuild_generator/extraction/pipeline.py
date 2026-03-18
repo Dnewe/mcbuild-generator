@@ -12,4 +12,4 @@ if __name__ == "__main__":
     config = get_config()
 
     # run
-    pipeline_extraction(config['extraction'])
+    pipeline_extraction(config["extraction"])

@@ -18,7 +18,8 @@ def process_build(build: Dict[str, str]):
     fp = build["filepath"]
     try:
         schem = Schem.load(fp)
-    except:
+    except Exception as e:
+        print(f"Failed loading Schem file {fp}. \nerror: {e}")
         return None
 
     return {
@@ -76,17 +77,26 @@ def filter_outofbonds(df: pd.DataFrame, min_w, min_l, min_h, max_w, max_l, max_h
     df_filtered = df_filtered[df_filtered["width"] >= min_w]
     df_filtered = df_filtered[df_filtered["length"] >= min_l]
     df_filtered = df_filtered[df_filtered["height"] >= min_h]
-    if max_w>0:
+    if max_w > 0:
         df_filtered = df_filtered[df_filtered["width"] <= max_w]
-    if max_l>0:
+    if max_l > 0:
         df_filtered = df_filtered[df_filtered["length"] <= max_l]
-    if max_h>0:
+    if max_h > 0:
         df_filtered = df_filtered[df_filtered["height"] <= max_h]
     print(f"\nRemoved {len(df) - len(df_filtered)} out of bonds builds")
     return df_filtered
 
 
-def clean_data(min_w=0, min_l=0, min_h=0, max_w=256, max_l=256, max_h=256, use_cache=True, multiproc=True):
+def clean_data(
+    min_w=0,
+    min_l=0,
+    min_h=0,
+    max_w=256,
+    max_l=256,
+    max_h=256,
+    use_cache=True,
+    multiproc=True,
+):
     """
     Clean data by removing outliers
     """
@@ -102,7 +112,9 @@ def clean_data(min_w=0, min_l=0, min_h=0, max_w=256, max_l=256, max_h=256, use_c
         ["volume", "width", "length", "height", "palettemax"],
         coeffs=[5, 5, 5, 5, 3],
     )
-    metadata_df_filtered = filter_outofbonds(metadata_df_filtered, min_w, min_l, min_h, max_w, max_l, max_h)
+    metadata_df_filtered = filter_outofbonds(
+        metadata_df_filtered, min_w, min_l, min_h, max_w, max_l, max_h
+    )
 
     start_build_count = len(metadata_df)
     end_build_count = len(metadata_df_filtered)
