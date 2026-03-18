@@ -23,3 +23,6 @@ BLOCKS_COUNT_CSV = f"data/02_intermediate/used_blocks_{RUN_NAME}.csv"
 ### INDEXES
 BLOCK_TO_IDX_JSON = f"data/02_intermediate/block_to_idx_{RUN_NAME}.json"
 IDX_TO_BLOCK_JSON = f"data/02_intermediate/idx_to_block_{RUN_NAME}.json"
+
+### PROCESSED BUILDS
+PROCESSED_BUILDS_DIR = 'data/03_processed/builds'

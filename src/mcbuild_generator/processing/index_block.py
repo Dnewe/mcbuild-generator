@@ -6,7 +6,7 @@ from typing import List, Dict, Literal, Tuple
 import pandas as pd
 
 from mcbuild_generator.utils.fs_io import read_json, write_json, write_csv
-from mcbuild_generator.processing.utils.schem import Schem
+from mcbuild_generator.processing.schem import Schem
 from mcbuild_generator.constants.paths import (
     ALL_BLOCKS_JSON,
     IDX_TO_BLOCK_JSON,
@@ -146,3 +146,7 @@ def index_block(builds_fp, filter=True, rare_variants_thresh=0.1, proportion_lev
 
     write_json(BLOCK_TO_IDX_JSON, block_to_idx)
     write_json(IDX_TO_BLOCK_JSON, idx_to_block)
+
+    print(f'- used blocks total   : {len(block_to_idx)}')
+    print(f'- used blocks filtered: {len(idx_to_block)}')
+    print(f'  => removed: {len(block_to_idx) - len(idx_to_block)}')

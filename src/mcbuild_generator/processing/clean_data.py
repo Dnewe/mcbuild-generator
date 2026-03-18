@@ -4,7 +4,7 @@ from tqdm import tqdm
 from typing import List, Dict
 from multiprocessing import Pool, cpu_count
 
-from mcbuild_generator.processing.utils.schem import Schem
+from mcbuild_generator.processing.schem import Schem
 from mcbuild_generator.utils.fs_io import write_csv, read_json, write_json
 from mcbuild_generator.constants.paths import (
     RAW_BUILDS_FP_JSON,
@@ -97,4 +97,3 @@ def clean_data(use_cache=True, multiproc=True):
 
     clean_builds_fp = metadata_df_filtered["filepath"].to_list()
     write_json(CLEAN_BUILDS_FP_JSON, clean_builds_fp)
-    print(clean_builds_fp[:10])
