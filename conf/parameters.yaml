@@ -12,3 +12,8 @@ extraction:
 processing:
   use_cache: True
   multiprocessing: True
+
+  transformation:
+    filter: True
+    rare_variants_thresh: 0.1
+    proportion_level: 'block'

@@ -1,5 +1,5 @@
 # RUN ID
-RUN_NAME = "partial"
+RUN_NAME = "full"
 
 # ------
 # DATA
@@ -18,7 +18,7 @@ CLEAN_BUILDS_FP_JSON = f"data/01_raw/clean_builds_fp_{RUN_NAME}.json"
 
 ### METADATA / ANALYSIS
 BUILDS_METADATA_CSV = f"data/02_intermediate/builds_metadata_{RUN_NAME}.csv"
-USED_BLOCKS_JSON = f"data/02_intermediate/used_blocks_{RUN_NAME}.json"
+BLOCKS_COUNT_CSV = f"data/02_intermediate/used_blocks_{RUN_NAME}.csv"
 
 ### INDEXES
 BLOCK_TO_IDX_JSON = f"data/02_intermediate/block_to_idx_{RUN_NAME}.json"

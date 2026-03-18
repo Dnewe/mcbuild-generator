@@ -10,7 +10,7 @@ def pipeline_processing(config):
     print("\ncleaning data...")
     clean_data(use_cache=config["use_cache"], multiproc=config["multiprocessing"])
     print("\ntransforming data...")
-    transform_data()
+    transform_data(**config['transformation'] ,use_cache=config["use_cache"])
 
 
 if __name__ == "__main__":
