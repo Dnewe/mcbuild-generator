@@ -36,6 +36,17 @@
                 "--config",
                 "conf/parameters.yaml"
             ]
+        },
+        {
+            "name": "Training",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/mcbuild_generator/training/pipeline.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config",
+                "conf/parameters.yaml"
+            ]
         }
     ]
 }

@@ -6,7 +6,7 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 
 from mcbuild_generator.processing.schem import Schem
-from mcbuild_generator.utils.fs_io import read_json
+from mcbuild_generator.utils.fs_io import read_json, create_dir, del_dir
 from mcbuild_generator.processing.index_block import index_block
 from mcbuild_generator.constants.paths import (
     CLEAN_BUILDS_FP_JSON,
@@ -19,8 +19,17 @@ from mcbuild_generator.constants.paths import (
 def convert_schem(fp, blocks_to_idx):
     schem = Schem.load(fp)
     array = schem.to_array(blocks_to_idx)
+    tensor = torch.from_numpy(array.astype(np.int16)).unsqueeze(0) # shape (1, h, l, w)
     save_fp = os.path.join(PROCESSED_BUILDS_DIR, f'{schem.id}.pt')
-    torch.save(torch.from_numpy(array.astype(np.int16)), save_fp)
+    torch.save(tensor, save_fp)
+
+
+def convert_schems(filepaths, blocks_to_idx, multiproc):
+    convert_schem_partial = partial(convert_schem, blocks_to_idx=blocks_to_idx)
+    processes = cpu_count() - 2 if multiproc else 1
+    with Pool(processes) as p:
+        for _ in tqdm(p.imap_unordered(convert_schem_partial, filepaths), total=len(filepaths)):
+            pass
 
 
 def transform_data(filter=True, rare_variants_thresh=0.1, proportion_level='block', use_cache= True, multiproc=True):
@@ -32,12 +41,16 @@ def transform_data(filter=True, rare_variants_thresh=0.1, proportion_level='bloc
 
     blocks_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
 
-    print('Transforming schem into tensors')
-
-    convert_schem_partial = partial(convert_schem, blocks_to_idx=blocks_to_idx)
-    processes = cpu_count() - 2 if multiproc else 1
-    with Pool(processes) as p:
-        for _ in tqdm(p.imap_unordered(convert_schem_partial, clean_builds_fp), total=len(clean_builds_fp)):
-            pass
+    schem_count = len(clean_builds_fp)
+    if os.path.isdir(PROCESSED_BUILDS_DIR):
+        tensor_count = len([fn for fn in os.listdir(PROCESSED_BUILDS_DIR) if fn.split('.')[-1]=='pt']) 
+    else: 
+        tensor_count = 0
+    if not use_cache or schem_count != tensor_count:
+        del_dir(PROCESSED_BUILDS_DIR)
+        create_dir(PROCESSED_BUILDS_DIR)
+        print('Transforming schem into tensors')
+        convert_schems(clean_builds_fp, blocks_to_idx, multiproc)
+    
         
 

@@ -8,9 +8,9 @@ def pipeline_processing(config):
     Data processing pipeline
     """
     print("\ncleaning data...")
-    clean_data(use_cache=config["use_cache"], multiproc=config["multiprocessing"])
+    clean_data(**config['cleaning'], use_cache=config["use_cache"], multiproc=config["multiprocessing"])
     print("\ntransforming data...")
-    transform_data(**config['transformation'] ,use_cache=config["use_cache"])
+    transform_data(**config['transformation'] ,use_cache=config["use_cache"], multiproc=config["multiprocessing"])
 
 
 if __name__ == "__main__":
