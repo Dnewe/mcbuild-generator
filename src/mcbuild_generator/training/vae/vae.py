@@ -4,9 +4,10 @@ import torch.nn.functional as F
 
 
 class VAE(nn.Module):
-    def __init__(self, block_count, embed_dim=64, latent_channels=16) -> None:
+    def __init__(self, block_count, pad_value, embed_dim=64, latent_channels=16) -> None:
         super().__init__()
 
+        self.pad_value = pad_value
         self.embedding = nn.Embedding(block_count, embed_dim)
 
         self.encoder = nn.Sequential(
@@ -37,7 +38,7 @@ class VAE(nn.Module):
         ph = (multiple - h % multiple) % multiple
         pw = (multiple - w % multiple) % multiple
         # pad last 3 dims: (w_before, w_after, h_before, h_after, d_before, d_after)
-        x = F.pad(x, (0, pw, 0, ph, 0, pd))
+        x = F.pad(x, (0, pw, 0, ph, 0, pd), value=self.pad_value)
         return x, (d, h, w)
 
     def reparameterize(self, mu, logvar):

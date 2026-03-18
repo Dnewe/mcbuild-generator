@@ -8,7 +8,7 @@ from mcbuild_generator.utils.fs_io import read_json
 from mcbuild_generator.utils.plots import plot_losses
 from mcbuild_generator.constants.paths import (
     LOSSES_PLOT_FP,
-    IDX_TO_BLOCK_JSON,
+    BLOCK_TO_IDX_JSON,
     MODEL_FP,
 )
 
@@ -22,8 +22,11 @@ def pipeline_training(config):
 
     # Model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    block_count = len(read_json(IDX_TO_BLOCK_JSON))
-    vae = VAE(block_count, **config["model"]).to(device)
+
+    block_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
+    block_count = len(block_to_idx)
+    air_index = block_to_idx['minecraft:air']
+    vae = VAE(block_count, air_index, **config["model"]).to(device)
 
     # training
     print("\nTraining...")
