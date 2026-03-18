@@ -89,6 +89,7 @@ def filter_outofbonds(df: pd.DataFrame, min_w, min_l, min_h, max_w, max_l, max_h
 
 
 def clean_data(
+    max_files=-1,
     min_w=0,
     min_l=0,
     min_h=0,
@@ -102,6 +103,8 @@ def clean_data(
     Clean data by removing outliers
     """
     raw_builds_fp = list(read_json(RAW_BUILDS_FP_JSON))
+    if use_cache and os.path.isfile(CLEAN_BUILDS_FP_JSON):
+        return # return if use_cache
 
     if not os.path.isfile(BUILDS_METADATA_CSV):
         print("\nExtracting metadata...")
@@ -119,6 +122,11 @@ def clean_data(
     metadata_df_filtered = filter_outofbonds(
         metadata_df_filtered, min_w, min_l, min_h, max_w, max_l, max_h
     )
+    if max_files > 0 and len(metadata_df_filtered) > max_files:
+        print(
+            f"\nRemoving excess files (current= {len(metadata_df_filtered)}, max_files= {max_files})"
+        )
+        metadata_df_filtered = metadata_df_filtered[:max_files]
 
     start_build_count = len(metadata_df)
     end_build_count = len(metadata_df_filtered)

@@ -12,6 +12,7 @@ wheels/
 .venv
 
 # Data
+*.zip
 *.schem
 *.csv
 *.json

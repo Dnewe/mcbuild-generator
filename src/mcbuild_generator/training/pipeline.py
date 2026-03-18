@@ -25,8 +25,11 @@ def pipeline_training(config):
 
     block_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
     block_count = len(block_to_idx)
-    air_index = block_to_idx['minecraft:air']
+    air_index = block_to_idx["minecraft:air"]
+
     vae = VAE(block_count, air_index, **config["model"]).to(device)
+    if config["use_pretrained"]:
+        vae.load_state_dict(torch.load(config["pretrained_fp"], map_location=device))
 
     # training
     print("\nTraining...")

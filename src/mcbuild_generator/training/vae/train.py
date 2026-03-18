@@ -4,6 +4,7 @@ from tqdm import tqdm
 
 from mcbuild_generator.training.vae.vae import VAE
 from mcbuild_generator.training.vae.vae_loss import vae_loss
+from mcbuild_generator.constants.paths import MODEL_FP
 
 
 def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
@@ -32,27 +33,27 @@ def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
             scaler.scale(loss).backward()  # type: ignore
             scaler.step(optimizer)
             scaler.update()
-            # loss.backward() # type: ignore
-            # optimizer.step()
 
-            total_loss += loss.item() # type: ignore
+            total_loss += loss.item()  # type: ignore
             tqdm_loader.set_postfix(
                 {
-                    "loss": loss.item(), # type: ignore
-                    "ce_loss": ce_loss.item(), # type: ignore
-                    "kl_loss": kl_loss.item(), # type: ignore
+                    "loss": loss.item(),  # type: ignore
+                    "ce_loss": ce_loss.item(),  # type: ignore
+                    "kl_loss": kl_loss.item(),  # type: ignore
                 }
-            ) 
+            )
 
         avg_train_loss = total_loss / len(train_loader.dataset)
         avg_val_loss = evaluate_model(model, val_loader, kl_weight, device, use_amp)
 
         print(
-            f"[{epoch}/{epochs}]: train_loss= {avg_train_loss:.3f} | val_loss= {avg_val_loss:.3f}"
+            f"[{epoch+1}/{epochs}]: train_loss= {avg_train_loss:.3f} | val_loss= {avg_val_loss:.3f}"
         )
 
         train_losses.append(avg_train_loss)
         val_losses.append(avg_val_loss)
+
+        torch.save(model.state_dict(), MODEL_FP.replace("model", "vae"))
 
     return train_losses, val_losses
 
@@ -60,7 +61,7 @@ def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
 def evaluate_model(model, loader, kl_weight, device, use_amp):
     model.eval()
     total_loss = 0
-    with torch.no_grad():  # No need to compute gradients
+    with torch.no_grad():
         for x_list in tqdm(loader, desc="Evaluating"):
             x_list = [x.to(device) for x in x_list]
 

@@ -4,7 +4,9 @@ import torch.nn.functional as F
 
 
 class VAE(nn.Module):
-    def __init__(self, block_count, pad_value, embed_dim=64, latent_channels=16) -> None:
+    def __init__(
+        self, block_count, pad_value, embed_dim=64, latent_channels=16
+    ) -> None:
         super().__init__()
 
         self.pad_value = pad_value

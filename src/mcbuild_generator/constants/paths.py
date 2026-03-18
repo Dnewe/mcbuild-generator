@@ -19,7 +19,7 @@ RAW_BUILDS_FP_JSON = f"data/01_raw/raw_builds_fp_{run_name}.json"
 CLEAN_BUILDS_FP_JSON = f"data/01_raw/clean_builds_fp_{run_name}.json"
 
 ### METADATA / ANALYSIS
-BUILDS_METADATA_CSV = f"data/02_intermediate/builds_metadata_{run_name}.csv"
+BUILDS_METADATA_CSV = "data/02_intermediate/builds_metadata.csv"  # independant of run (applied to all files)
 BLOCKS_COUNT_CSV = f"data/02_intermediate/used_blocks_{run_name}.csv"
 
 ### INDEXES
