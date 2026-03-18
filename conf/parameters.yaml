@@ -2,33 +2,41 @@
 # HYPERPARAMETERS #
 #-----------------#
 
+run_name: 'partial'
+
 
 ### EXTRACTION PIPELINE
 extraction:
   data_dir: 'data/01_raw/schem/'    # path to directory containing building files (.schem, ...)
-  max_files: -1                   # maximum number of files 
+  max_files: 1000                   # maximum number of files 
 
 ### PROCESSING PIPELINE
 processing:
-  use_cache: True
+  use_cache: False
   multiprocessing: True
 
   cleaning:
-    min_w: 4
-    min_h: 4
-    min_l: 4
-    max_w: 48
-    max_h: 48
-    max_l: 48
+    min_w: 8
+    min_h: 8
+    min_l: 8
+    max_w: -1
+    max_h: -1
+    max_l: -1
 
   transformation:
     filter: True
-    rare_variants_thresh: 0.4
+    rare_variants_thresh: 0.1
     proportion_level: 'block'
 
 training:
-  train_val_split: [0.8, 0.2]
-  epochs: 3
-  lr: 0.001
-  batch_size: 4
-  embed_dim: 32
+  dataset:
+    train_val_split: [0.8, 0.2]
+    batch_size: 2
+    num_workers: 0
+  model:
+    latent_channels: 16
+    embed_dim: 32
+  train:
+    epochs: 3
+    lr: 0.001
+    kl_weight: 0.0001
