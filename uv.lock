@@ -406,6 +406,15 @@ wheels = [
 ]
 
 [[package]]
+name = "immutable-views"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ce/05/6c84a56d52ad8e838389651a59e7e71d175ca26656605883b79fe3a734e2/immutable-views-0.6.1.tar.gz", hash = "sha256:48e0543786e8a196667fb8412ce35c4f555ce08f39eab21dcf4b0a23d8d19295", size = 45599, upload-time = "2021-06-30T08:28:55.438Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/87/cc/003c1a4965e2499fdf9bde2543d3d55205fdd7c47b11d5b52be94ef4c535/immutable_views-0.6.1-py2.py3-none-any.whl", hash = "sha256:549dbe1106c53e26da28e1ab0f19f54ff20592cc6590f791ffd060de140c1aff", size = 19985, upload-time = "2021-06-30T08:28:53.671Z" },
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -879,6 +888,7 @@ source = { editable = "." }
 dependencies = [
     { name = "jupyter" },
     { name = "matplotlib" },
+    { name = "mcschematic" },
     { name = "nbtlib" },
     { name = "numpy" },
     { name = "pandas" },
@@ -893,6 +903,7 @@ dependencies = [
 requires-dist = [
     { name = "jupyter", specifier = ">=1.1.1" },
     { name = "matplotlib", specifier = ">=3.10.8" },
+    { name = "mcschematic", specifier = ">=11.4.4" },
     { name = "nbtlib", specifier = ">=2.0.4" },
     { name = "numpy", specifier = ">=2.4.3" },
     { name = "pandas", specifier = ">=3.0.1" },
@@ -901,6 +912,19 @@ requires-dist = [
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "torch", specifier = ">=2.10.0" },
     { name = "tqdm", specifier = ">=4.67.3" },
+]
+
+[[package]]
+name = "mcschematic"
+version = "11.4.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "immutable-views" },
+    { name = "nbtlib" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7e/7a/e63c23df93ff3e499b54af4644a7509c9706784560016f6dd8b563920b57/mcschematic-11.4.4.tar.gz", hash = "sha256:ce714c9280b569ccf8ad77f6160647c2c8710a7c85437d6c28c7f9424f7e8e7b", size = 51907, upload-time = "2026-02-07T20:05:40.747Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/41/ece29ce1610caa17dc12231d977b8b03dc58bdbfb4bbfc6546c71458373f/mcschematic-11.4.4-py3-none-any.whl", hash = "sha256:898c4f08b07749f288e3caf59def3bd8a69c179e7c94320b72cf830a82345439", size = 47974, upload-time = "2026-02-07T20:05:39.339Z" },
 ]
 
 [[package]]

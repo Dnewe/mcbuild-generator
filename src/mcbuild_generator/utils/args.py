@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import yaml
+from collections import defaultdict
 
 
 def parse_config():
@@ -33,8 +34,11 @@ def get_config():
     """
     Parse argument --config (yaml_fp) to return config dict
     """
-    args = parse_config()
-    check_config(args)
-    config = yaml.load(open(args.config, "r"), Loader=yaml.SafeLoader)
-
-    return config
+    try:
+        args = parse_config()
+        check_config(args)
+        config = yaml.load(open(args.config, "r"), Loader=yaml.SafeLoader)
+        return config
+    except Exception as e:
+        print(f"Error while loading config: {e}")
+        return defaultdict(str)

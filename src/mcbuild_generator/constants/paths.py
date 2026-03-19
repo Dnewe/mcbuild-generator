@@ -1,7 +1,11 @@
 from mcbuild_generator.utils.args import get_config
 
 # RETRIEVE RUN ID
-run_name = get_config()["run_name"]
+try:
+    run_name = get_config()["run_name"]
+except Exception as e:
+    print(f"Failed loading 'run_name': {e}")
+    run_name = "default"
 
 # ------
 # DATA
@@ -31,4 +35,4 @@ PROCESSED_BUILDS_DIR = f"data/03_processed/builds_{run_name}"
 
 ### TRAINING
 MODEL_FP = f"data/05_models/model_{run_name}.pth"
-LOSSES_PLOT_FP = f"data/06_reporting/losses_{run_name}.jpg"
+LOSSES_PLOT_FP = f"data/07_reporting/losses_{run_name}.jpg"
