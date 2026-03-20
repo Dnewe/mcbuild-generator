@@ -106,7 +106,7 @@ def clean_data(
     """
     raw_builds_fp = list(read_json(RAW_BUILDS_FP_JSON))
     if use_cache and os.path.isfile(CLEAN_BUILDS_FP_JSON):
-        return # return if use_cache
+        return  # return if use_cache
 
     if not os.path.isfile(BUILDS_METADATA_CSV):
         print("\nExtracting metadata...")

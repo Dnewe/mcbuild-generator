@@ -17,5 +17,6 @@ wheels/
 *.csv
 *.json
 *.pt
+*.pth
 
 # Cache

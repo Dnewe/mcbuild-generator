@@ -14,11 +14,11 @@ def pipeline_processing(config, model_config):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = get_model(
-        embed_dim= model_config["embed_dim"],
-        latent_channels= model_config["latent_channels"],
-        use_pretrained= True,
-        pretrained_fp= MODEL_FP,
-        device=device
+        embed_dim=model_config["embed_dim"],
+        latent_channels=model_config["latent_channels"],
+        use_pretrained=True,
+        pretrained_fp=MODEL_FP,
+        device=device,
     )
 
     print("\nComputing reconstructed builds...")
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     config = get_config()
 
     # run
-    pipeline_processing(config["validation"], config["training"]["model"]) # type: ignore
+    pipeline_processing(config["validation"], config["training"]["model"])  # type: ignore

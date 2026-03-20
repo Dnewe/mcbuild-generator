@@ -1,4 +1,3 @@
-
 from mcbuild_generator.training.dataset import get_dataset
 from mcbuild_generator.constants.paths import IDX_TO_BLOCK_JSON, GENERATED_SCHEM_DIR
 from mcbuild_generator.validation.create_schematic import create_schematic
@@ -10,15 +9,15 @@ def reconstruct_builds(model, device, n_builds=8):
     idx_to_block = read_json(IDX_TO_BLOCK_JSON)
 
     for i in range(n_builds):
-        x = val_dataset[i].to(device) # type: ignore
+        x = val_dataset[i].to(device)  # type: ignore
         out = model.reconstruct(x, device=device)
 
         original = x[0].numpy()
         reconstructed = out[0].numpy()
 
         # original
-        schem_name = f"original_{i+1}"
+        schem_name = f"original_{i + 1}"
         create_schematic(GENERATED_SCHEM_DIR, schem_name, original, idx_to_block)
         # reconstructed
-        schem_name = f"reconstructed_{i+1}"
+        schem_name = f"reconstructed_{i + 1}"
         create_schematic(GENERATED_SCHEM_DIR, schem_name, reconstructed, idx_to_block)

@@ -6,7 +6,15 @@ from mcbuild_generator.constants.paths import BLOCK_TO_IDX_JSON, IDX_TO_BLOCK_JS
 
 
 class VAELoss(torch.nn.Module):
-    def __init__(self, block_count, air_index, air_weight=0.05, kl_start=0.0, kl_end=1.0, kl_anneal_steps=5000) -> None:
+    def __init__(
+        self,
+        block_count,
+        air_index,
+        air_weight=0.05,
+        kl_start=0.0,
+        kl_end=1.0,
+        kl_anneal_steps=5000,
+    ) -> None:
         super().__init__()
         ce_weights = torch.ones(block_count)
         ce_weights[air_index] = air_weight
@@ -29,17 +37,17 @@ class VAELoss(torch.nn.Module):
             F.cross_entropy(out, tgt, weight=self.ce_weights)  # type: ignore
             for out, tgt in zip(outputs, targets)
         ) / len(outputs)
-    
+
     def loss_kl(self, mu_list, logvar_list):
         total = 0
         for mu, logvar in zip(mu_list, logvar_list):
-            mu = mu.float() # force float32
-            logvar = logvar.float() # force float32
+            mu = mu.float()  # force float32
+            logvar = logvar.float()  # force float32
             kl = torch.clamp(logvar, min=-10, max=10)  # to prevent gradient explosion
             kl = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp())
             total += torch.mean(kl)
         return total / len(mu_list)
-    
+
     def forward(self, outputs, targets, mu_list, logvar_list):
         ce_loss = self.loss_ce(outputs, targets)
         kl_loss = self.loss_kl(mu_list, logvar_list)

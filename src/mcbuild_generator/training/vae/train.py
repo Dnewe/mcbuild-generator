@@ -50,7 +50,7 @@ def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, 
         avg_val_loss = evaluate_model(model, criterion, val_loader, device, use_amp)
 
         print(
-            f"[{epoch+1}/{epochs}]: train_loss= {avg_train_loss:.3f} | val_loss= {avg_val_loss:.3f}"
+            f"[{epoch + 1}/{epochs}]: train_loss= {avg_train_loss:.3f} | val_loss= {avg_val_loss:.3f}"
         )
 
         train_losses.append(avg_train_loss)
@@ -61,7 +61,7 @@ def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, 
     return train_losses, val_losses
 
 
-def evaluate_model(model:VAE, criterion:VAELoss, loader, device, use_amp):
+def evaluate_model(model: VAE, criterion: VAELoss, loader, device, use_amp):
     model.eval()
     total_loss = 0
     with torch.no_grad():
@@ -70,9 +70,7 @@ def evaluate_model(model:VAE, criterion:VAELoss, loader, device, use_amp):
 
             with torch.autocast("cuda", enabled=use_amp):
                 recon_x_list, mu_list, logvar_list = model(x_list)
-                loss, _, _ = criterion(
-                    recon_x_list, x_list, mu_list, logvar_list
-                )
+                loss, _, _ = criterion(recon_x_list, x_list, mu_list, logvar_list)
 
             total_loss += loss.item()  # type: ignore
 

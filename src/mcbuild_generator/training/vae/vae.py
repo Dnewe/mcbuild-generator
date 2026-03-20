@@ -28,7 +28,7 @@ class VAE(nn.Module):
 
         self.pad_value = pad_value
         self.latent_channels = latent_channels
-        self.multiple = 8 # given by dimension reduction factor caused by downsampling
+        self.multiple = 8  # given by dimension reduction factor caused by downsampling
 
         self.embedding = nn.Embedding(block_count, embed_dim)
 
@@ -41,7 +41,7 @@ class VAE(nn.Module):
             nn.Conv3d(64, 128, 3, 2, 1),
             nn.LeakyReLU(0.1),
             ResBlock(128),
-            ResBlock(128)
+            ResBlock(128),
         )
         self.encoder_norm = nn.GroupNorm(8, 128)
 
@@ -71,7 +71,7 @@ class VAE(nn.Module):
         return x, (d, h, w)
 
     def reparameterize(self, mu, logvar):
-        logvar = torch.clamp(logvar, -10, 10) # to prevent gradient explosion
+        logvar = torch.clamp(logvar, -10, 10)  # to prevent gradient explosion
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         return mu + eps * std
@@ -101,7 +101,7 @@ class VAE(nn.Module):
             logvar_list.append(logvar)
 
         return results, mu_list, logvar_list
-    
+
     @torch.inference_mode()
     def reconstruct(self, x, device=torch.device("cpu")) -> torch.Tensor:
         x = x.to(device)
@@ -117,14 +117,16 @@ class VAE(nn.Module):
         block_ids = out.argmax(dim=1)
 
         return block_ids
-    
+
     @torch.inference_mode()
-    def generate(self, shape=(16,16,16), device=torch.device('cpu')) -> torch.Tensor:
+    def generate(self, shape=(16, 16, 16), device=torch.device("cpu")) -> torch.Tensor:
         latent_h = shape[0] // self.multiple
         latent_l = shape[1] // self.multiple
         latent_w = shape[2] // self.multiple
 
-        z = torch.randn(1, self.latent_channels, latent_h, latent_l, latent_w).to(device)
+        z = torch.randn(1, self.latent_channels, latent_h, latent_l, latent_w).to(
+            device
+        )
 
         out = self.decode(z)
         block_ids = out.argmax(dim=1)
