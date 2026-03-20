@@ -47,6 +47,17 @@
                 "--config",
                 "conf/parameters.yaml"
             ]
+        },
+        {
+            "name": "Validation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/mcbuild_generator/validation/pipeline.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config",
+                "conf/parameters.yaml"
+            ]
         }
     ]
 }
