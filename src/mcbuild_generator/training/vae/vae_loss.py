@@ -35,9 +35,8 @@ class VAELoss(torch.nn.Module):
         for mu, logvar in zip(mu_list, logvar_list):
             mu = mu.float() # force float32
             logvar = logvar.float() # force float32
-
+            kl = torch.clamp(logvar, min=-10, max=10)  # to prevent gradient explosion
             kl = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp())
-            kl = torch.clamp(kl, min=-10, max=10)  # to prevent gradient explosion
             total += torch.mean(kl)
         return total / len(mu_list)
     
