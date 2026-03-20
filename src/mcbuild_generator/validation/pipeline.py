@@ -33,4 +33,4 @@ if __name__ == "__main__":
     config = get_config()
 
     # run
-    pipeline_processing(config["validation"], config["training"]["model"])
+    pipeline_processing(config["validation"], config["training"]["model"]) # type: ignore

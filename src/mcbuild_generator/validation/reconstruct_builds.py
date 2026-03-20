@@ -11,7 +11,7 @@ def reconstruct_builds(model, device, n_builds=8):
     idx_to_block = read_json(IDX_TO_BLOCK_JSON)
 
     for i in range(n_builds):
-        x = val_dataset[i].to(device)
+        x = val_dataset[i].to(device) # type: ignore
         out = model.reconstruct(x, device=device)
 
         original = x[0].numpy()
