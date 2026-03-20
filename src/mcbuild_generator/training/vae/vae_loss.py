@@ -30,11 +30,14 @@ class VAELoss(torch.nn.Module):
             for out, tgt in zip(outputs, targets)
         ) / len(outputs)
     
-    def loss_kl(self, mu_list, logvar_list, free_bits=0.5):
+    def loss_kl(self, mu_list, logvar_list):
         total = 0
         for mu, logvar in zip(mu_list, logvar_list):
+            mu = mu.float() # force float32
+            logvar = logvar.float() # force float32
+
             kl = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp())
-            kl = torch.clamp(kl, min=free_bits)
+            kl = torch.clamp(kl, min=-10, max=10)  # to prevent gradient explosion
             total += torch.mean(kl)
         return total / len(mu_list)
     
