@@ -92,13 +92,13 @@ class Schem:
                 shift = 0
         return counts
 
-    def to_array(self, blocks_to_idx):
+    def to_array(self, block_to_idx):
         data = self.get_blockdata()
 
         max_idx = max(self.palette_inv.keys())
         lookup = np.zeros(max_idx + 1, dtype=int)
 
         for i in range(max_idx + 1):
-            lookup[i] = blocks_to_idx[self.palette_inv[i]]
+            lookup[i] = block_to_idx[self.palette_inv[i]]
 
         return lookup[data]

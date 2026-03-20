@@ -48,7 +48,7 @@ def extract_metadata(builds: List[Dict[str, str]], multiproc=True):
     write_csv(BUILDS_METADATA_CSV, rows)
 
 
-def filter_outliers(df: pd.DataFrame, columns: List[str], coeffs: List[int]):
+def filter_outliers(df: pd.DataFrame, columns: List[str], coeffs: List[float]):
     """
     Return DF without outliers for the specified column var using Median Absolute Deviation (MAD)
     threshold = `coeff` * 1.4826 * MAD
@@ -89,7 +89,9 @@ def filter_outofbonds(df: pd.DataFrame, min_w, min_l, min_h, max_w, max_l, max_h
 
 
 def clean_data(
-    max_files=-1,
+    max_files,
+    outliers_cols: List[str],
+    outliers_thresh_coeff: List[float],
     min_w=0,
     min_l=0,
     min_h=0,
@@ -115,8 +117,8 @@ def clean_data(
     print("\nFiltering outliers...")
     metadata_df_filtered = filter_outliers(
         metadata_df,
-        ["volume", "width", "length", "height", "palettemax"],
-        coeffs=[5, 5, 5, 5, 3],
+        columns=outliers_cols,
+        coeffs=outliers_thresh_coeff,
     )
     print("\nFiltering out of bonds...")
     metadata_df_filtered = filter_outofbonds(

@@ -2,6 +2,7 @@ import torch
 
 from mcbuild_generator.training.vae.train import train
 from mcbuild_generator.training.vae.vae import get_model
+from mcbuild_generator.training.vae.vae_loss import get_vaeloss
 from mcbuild_generator.training.dataset import get_loaders
 from mcbuild_generator.utils.args import get_config
 from mcbuild_generator.utils.plots import plot_losses
@@ -23,10 +24,13 @@ def pipeline_training(config):
 
     model = get_model(**config["model"], device=device)
 
+    # Criterion
+    criterion = get_vaeloss(**config["loss"])
+
     # training
     print("\nTraining...")
     train_losses, val_losses = train(
-        model, train_loader, val_loader, **config["train"], device=device
+        model, criterion, train_loader, val_loader, **config["train"], device=device
     )
 
     # save model

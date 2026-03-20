@@ -36,3 +36,6 @@ PROCESSED_BUILDS_DIR = f"data/03_processed/builds_{run_name}"
 ### TRAINING
 MODEL_FP = f"data/05_models/model_{run_name}.pth"
 LOSSES_PLOT_FP = f"data/07_reporting/losses_{run_name}.jpg"
+
+### MODEL OUTPUTS
+GENERATED_SCHEM_DIR = f"data/06_outputs/"

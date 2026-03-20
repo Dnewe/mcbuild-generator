@@ -2,16 +2,17 @@ import torch.optim as optim
 import torch
 from tqdm import tqdm
 
+from mcbuild_generator.training.vae.vae_loss import VAELoss
 from mcbuild_generator.training.vae.vae import VAE
-from mcbuild_generator.training.vae.vae_loss import vae_loss
 from mcbuild_generator.constants.paths import MODEL_FP
 
 
-def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
+def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, device):
     model.to(device)
-    optimizer = optim.Adam(model.parameters(), lr=lr)
     use_amp = torch.cuda.is_available()
     scaler = torch.GradScaler(enabled=use_amp)
+
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     train_losses = []
     val_losses = []
@@ -26,13 +27,15 @@ def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
 
             with torch.autocast("cuda", enabled=use_amp):
                 recon_x_list, mu_list, logvar_list = model(x_list)
-                loss, ce_loss, kl_loss = vae_loss(
-                    recon_x_list, x_list, mu_list, logvar_list, kl_weight
+                loss, ce_loss, kl_loss = criterion(
+                    recon_x_list, x_list, mu_list, logvar_list
                 )
 
             scaler.scale(loss).backward()  # type: ignore
             scaler.step(optimizer)
             scaler.update()
+
+            criterion.step()
 
             total_loss += loss.item()  # type: ignore
             tqdm_loader.set_postfix(
@@ -44,7 +47,7 @@ def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
             )
 
         avg_train_loss = total_loss / len(train_loader.dataset)
-        avg_val_loss = evaluate_model(model, val_loader, kl_weight, device, use_amp)
+        avg_val_loss = evaluate_model(model, criterion, val_loader, device, use_amp)
 
         print(
             f"[{epoch+1}/{epochs}]: train_loss= {avg_train_loss:.3f} | val_loss= {avg_val_loss:.3f}"
@@ -58,7 +61,7 @@ def train(model: VAE, train_loader, val_loader, epochs, lr, kl_weight, device):
     return train_losses, val_losses
 
 
-def evaluate_model(model, loader, kl_weight, device, use_amp):
+def evaluate_model(model:VAE, criterion:VAELoss, loader, device, use_amp):
     model.eval()
     total_loss = 0
     with torch.no_grad():
@@ -67,8 +70,8 @@ def evaluate_model(model, loader, kl_weight, device, use_amp):
 
             with torch.autocast("cuda", enabled=use_amp):
                 recon_x_list, mu_list, logvar_list = model(x_list)
-                loss, _, _ = vae_loss(
-                    recon_x_list, x_list, mu_list, logvar_list, kl_weight
+                loss, _, _ = criterion(
+                    recon_x_list, x_list, mu_list, logvar_list
                 )
 
             total_loss += loss.item()  # type: ignore
