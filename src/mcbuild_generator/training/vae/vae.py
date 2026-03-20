@@ -11,10 +11,10 @@ class ResBlock(nn.Module):
         super().__init__()
         self.block = nn.Sequential(
             nn.Conv3d(channels, channels, 3, 1, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             nn.Conv3d(channels, channels, 3, 1, 1),
         )
-        self.act = nn.LeakyReLU(0.2)
+        self.act = nn.LeakyReLU(0.1)
 
     def forward(self, x):
         return self.act(x + self.block(x))
@@ -22,7 +22,7 @@ class ResBlock(nn.Module):
 
 class VAE(nn.Module):
     def __init__(
-        self, block_count, pad_value, embed_dim=64, latent_channels=16
+        self, block_count, pad_value, embed_dim=64, latent_channels=64
     ) -> None:
         super().__init__()
 
@@ -34,29 +34,30 @@ class VAE(nn.Module):
 
         self.encoder = nn.Sequential(
             nn.Conv3d(embed_dim, 32, 3, 2, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             ResBlock(32),
             nn.Conv3d(32, 64, 3, 2, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             nn.Conv3d(64, 128, 3, 2, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             ResBlock(128),
             ResBlock(128)
         )
+        self.encoder_norm = nn.GroupNorm(8, 128)
 
         self.conv_mu = nn.Conv3d(128, self.latent_channels, 1)
         self.conv_logvar = nn.Conv3d(128, self.latent_channels, 1)
 
         self.decoder = nn.Sequential(
             nn.ConvTranspose3d(self.latent_channels, 128, 3, 2, 1, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             ResBlock(128),
             nn.ConvTranspose3d(128, 64, 3, 2, 1, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             nn.ConvTranspose3d(64, 32, 3, 2, 1, 1),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             ResBlock(32),
-            nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.1),
             nn.ConvTranspose3d(32, block_count, 1),
         )
 
@@ -76,6 +77,7 @@ class VAE(nn.Module):
 
     def encode(self, x):
         h = self.encoder(x)
+        h = self.encoder_norm(h)
         return self.conv_mu(h), self.conv_logvar(h)
 
     def decode(self, z):

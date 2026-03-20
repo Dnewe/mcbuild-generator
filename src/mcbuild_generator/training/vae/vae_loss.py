@@ -30,11 +30,13 @@ class VAELoss(torch.nn.Module):
             for out, tgt in zip(outputs, targets)
         ) / len(outputs)
     
-    def loss_kl(self, mu_list, logvar_list):
-        return sum(
-            -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
-            for mu, logvar in zip(mu_list, logvar_list)
-        ) / len(mu_list)
+    def loss_kl(self, mu_list, logvar_list, free_bits=0.5):
+        total = 0
+        for mu, logvar in zip(mu_list, logvar_list):
+            kl = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp())
+            kl = torch.clamp(kl, min=free_bits)
+            total += torch.mean(kl)
+        return total / len(mu_list)
     
     def forward(self, outputs, targets, mu_list, logvar_list):
         ce_loss = self.loss_ce(outputs, targets)
