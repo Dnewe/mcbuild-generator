@@ -26,6 +26,7 @@ def pipeline_training(config):
 
     # Criterion
     criterion = get_vaeloss(**config["loss"])
+    criterion.to(device)
 
     # training
     print("\nTraining...")
