@@ -7,31 +7,37 @@ run_name: 'full_max64'
 
 ### EXTRACTION PIPELINE
 extraction:
+  use_cache: True
+  multiprocessing: True
+
   data_dir: 'data/01_raw/schem/'    # path to directory containing building files (.schem, ...)
   max_files: -1                   # maximum number of files to extract (-1: not limit)
 
+
 ### PROCESSING PIPELINE
 processing:
-  use_cache: False
+  use_cache: True
   multiprocessing: True
 
-  cleaning:
+  build_filter:
     max_files: -1   # maximum number of files after cleaning (-1: not limit)
-    outliers_cols: ["volume", "width", "length", "height", "palettemax"]
-    outliers_thresh_coeff: [5, 5, 5, 10, 3]
-    min_w: 32
-    min_h: 32
-    min_l: 32
+    outliers_cols: []  # "volume", "width", "length", "height", "palettemax"
+    outliers_thresh_coeff: []  #
+    min_w: 16
+    min_h: 16
+    min_l: 16
     max_w: 64
     max_h: 64
     max_l: 64
 
-  transformation:
-    filter: True
-    rare_variants_thresh: 0.2
+  block_filter:
+    min_use_count_block: 100 
+    min_use_count_build: 10
+    rare_variants_thresh: 0.1
     proportion_level: 'block'
 
 
+### TRAINING PIPELINE
 training:
   dataset:
     train_val_split: [0.8, 0.2]
@@ -41,19 +47,21 @@ training:
   model:
     use_pretrained: False
     pretrained_fp: ''
-    latent_channels: 32
+    latent_channels: 64
     embed_dim: 64
   
   loss:
-    air_weight: 0.05 
+    ce_blocks: ["air", "dirt", "sand", "water[level=0]", "stone", "diorite", "andesite", "granite"]
+    ce_blocks_weight: [0.05, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     kl_start: 0.0 
-    kl_end: 0.1
-    kl_anneal_step: 2000
+    kl_end: 1.0
+    kl_anneal_step: 5000
 
   train:
     epochs: 10
-    lr: 0.003
+    lr: 0.0001
 
-  
+
+### VALIDATION PIPELINE
 validation:
   []

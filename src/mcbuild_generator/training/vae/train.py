@@ -1,6 +1,7 @@
 import torch.optim as optim
 import torch
 from tqdm import tqdm
+import numpy as np
 
 from mcbuild_generator.training.vae.vae_loss import VAELoss
 from mcbuild_generator.training.vae.vae import VAE
@@ -16,6 +17,8 @@ def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, 
 
     train_losses = []
     val_losses = []
+    best_loss = np.inf
+
     for epoch in range(epochs):
         model.train()
         total_loss = 0
@@ -56,7 +59,8 @@ def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, 
         train_losses.append(avg_train_loss)
         val_losses.append(avg_val_loss)
 
-        torch.save(model.state_dict(), MODEL_FP.replace("model", "vae"))
+        if avg_val_loss < best_loss:
+            torch.save(model.state_dict(), MODEL_FP)
 
     return train_losses, val_losses
 

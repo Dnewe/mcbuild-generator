@@ -9,15 +9,16 @@ class VAELoss(torch.nn.Module):
     def __init__(
         self,
         block_count,
-        air_index,
-        air_weight=0.05,
+        ce_blocks_idx=[],
+        ce_blocks_w=[],
         kl_start=0.0,
         kl_end=1.0,
         kl_anneal_steps=5000,
     ) -> None:
         super().__init__()
         ce_weights = torch.ones(block_count)
-        ce_weights[air_index] = air_weight
+        for idx, w in zip(ce_blocks_idx, ce_blocks_w):
+            ce_weights[idx] = w
         self.register_buffer("ce_weights", ce_weights)
 
         self.kl_start = kl_start
@@ -54,7 +55,7 @@ class VAELoss(torch.nn.Module):
         return ce_loss + self.kl_weight * kl_loss, ce_loss, kl_loss
 
 
-def get_vaeloss(air_weight, kl_start, kl_end, kl_anneal_step):
+def get_vaeloss(ce_blocks, ce_blocks_weight, kl_start, kl_end, kl_anneal_step):
     """
     Get VAELoss object by retrieving parameters values in JSON files.
     """
@@ -62,6 +63,6 @@ def get_vaeloss(air_weight, kl_start, kl_end, kl_anneal_step):
     block_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
 
     block_count = len(idx_to_block)
-    air_index = block_to_idx["minecraft:air"]
+    ce_blocks_idx = [block_to_idx[f"minecraft:{b}"] for b in ce_blocks]
 
-    return VAELoss(block_count, air_index, air_weight, kl_start, kl_end, kl_anneal_step)
+    return VAELoss(block_count, ce_blocks_idx, ce_blocks_weight, kl_start, kl_end, kl_anneal_step)
