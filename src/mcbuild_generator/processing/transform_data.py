@@ -4,18 +4,15 @@ import numpy as np
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 from functools import partial
+from typing import List
 
 from mcbuild_generator.processing.schem import Schem
-from mcbuild_generator.utils.fs_io import read_json, create_dir, del_dir
-from mcbuild_generator.processing.index_block import index_block
-from mcbuild_generator.constants.paths import (
-    CLEAN_BUILDS_FP_JSON,
-    IDX_TO_BLOCK_JSON,
-    BLOCK_TO_IDX_JSON,
-    PROCESSED_BUILDS_DIR,
-)
+from mcbuild_generator.utils.fs_io import create_dir, del_dir
+from mcbuild_generator.constants.paths import PROCESSED_BUILDS_DIR
 
-"""def pad_to_multiple(x, patch_size):
+
+""" TODO create patches of too big builds
+def pad_to_multiple(x, patch_size): 
     H, L, W= x.shape[-3], x.shape[-2], x.shape[-1]
     pad_h = (patch_size - H % patch_size) % patch_size
     pad_l = (patch_size - L % patch_size) % patch_size
@@ -43,35 +40,20 @@ def convert_schems(filepaths, block_to_idx, multiproc):
 
 
 def transform_data(
-    filter=True,
-    rare_variants_thresh=0.1,
-    proportion_level="block",
+    builds_fp: List[str],
+    block_to_idx,
     use_cache=True,
     multiproc=True,
 ):
-    clean_builds_fp = read_json(CLEAN_BUILDS_FP_JSON)
-
-    if (
-        not use_cache
-        or not os.path.isfile(BLOCK_TO_IDX_JSON)
-        or not os.path.isfile(IDX_TO_BLOCK_JSON)
-    ):
-        print("indexing blocks...")
-        index_block(
-            clean_builds_fp, filter, rare_variants_thresh, proportion_level, use_cache
-        )
-
-    block_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
-
-    schem_count = len(clean_builds_fp)
     if os.path.isdir(PROCESSED_BUILDS_DIR):
+        schem_count = len(builds_fp)
         tensor_count = len(
             [fn for fn in os.listdir(PROCESSED_BUILDS_DIR) if fn.split(".")[-1] == "pt"]
         )
-    else:
-        tensor_count = 0
-    if not use_cache or schem_count != tensor_count:
-        del_dir(PROCESSED_BUILDS_DIR)
-        create_dir(PROCESSED_BUILDS_DIR)
-        print("\nTransforming schem into tensors...")
-        convert_schems(clean_builds_fp, block_to_idx, multiproc)
+        if use_cache and schem_count == tensor_count:
+            return
+
+    del_dir(PROCESSED_BUILDS_DIR)
+    create_dir(PROCESSED_BUILDS_DIR)
+    print("\nTransforming schem into tensors...")
+    convert_schems(builds_fp, block_to_idx, multiproc)

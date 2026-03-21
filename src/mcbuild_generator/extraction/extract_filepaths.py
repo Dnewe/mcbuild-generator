@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from typing import List
+from typing import List, Dict
 
 from mcbuild_generator.utils.fs_io import write_json
 from mcbuild_generator.constants.paths import RAW_BUILDS_FP_JSON
@@ -14,7 +14,7 @@ def get_row(dir, fn):
 
 def extract_filepaths(
     datadir: str, max_files: int = -1, extensions: List[str] = ["schem"]
-):
+) -> List[Dict[str, str]]:
     """
     Create CSV file containing metadata of build files.
 
@@ -36,5 +36,6 @@ def extract_filepaths(
         filenames = filenames[:max_files]
 
     builds_fp = [get_row(datadir, fn) for fn in filenames]
-
     write_json(RAW_BUILDS_FP_JSON, builds_fp)
+
+    return builds_fp
