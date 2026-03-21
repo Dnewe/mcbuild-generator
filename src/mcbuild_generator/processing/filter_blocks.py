@@ -115,9 +115,9 @@ def normalize_variant(block: str) -> str:
     block = block.replace("occupied=true", "occupied=false")
 
     # clean false waterlogged
-    block = re.sub(r',?waterlogged=false,?', ',', block)
-    block = re.sub(r'\[,', '[', block)
-    block = re.sub(r',\]', ']', block)
+    block = re.sub(r",?waterlogged=false,?", ",", block)
+    block = re.sub(r"\[,", "[", block)
+    block = re.sub(r",\]", "]", block)
 
     # clean empty tags
     block = block.replace("[]", "")
@@ -159,42 +159,53 @@ def merge_rare_variants(
 
 
 def remove_rare_blocks(
-    blocks_df: pd.DataFrame, 
-    min_use_count_build:int, 
-    min_use_count_block:int, 
-    new_block:str= "minecraft:air"
+    blocks_df: pd.DataFrame,
+    min_use_count_build: int,
+    min_use_count_block: int,
+    new_block: str = "minecraft:air",
 ):
     # block level
     block_total_counts = blocks_df.groupby("base_block")["block_count"].sum()
-    block_rare_base_blocks = block_total_counts[block_total_counts < min_use_count_block].index
-    blocks_df.loc[blocks_df["base_block"].isin(block_rare_base_blocks), "new_block"] = new_block
+    block_rare_base_blocks = block_total_counts[
+        block_total_counts < min_use_count_block
+    ].index
+    blocks_df.loc[blocks_df["base_block"].isin(block_rare_base_blocks), "new_block"] = (
+        new_block
+    )
     # build level
     build_total_counts = blocks_df.groupby("base_block")["build_count"].sum()
-    build_rare_base_blocks = build_total_counts[build_total_counts < min_use_count_build].index
-    blocks_df.loc[blocks_df["base_block"].isin(build_rare_base_blocks), "new_block"] = new_block
+    build_rare_base_blocks = build_total_counts[
+        build_total_counts < min_use_count_build
+    ].index
+    blocks_df.loc[blocks_df["base_block"].isin(build_rare_base_blocks), "new_block"] = (
+        new_block
+    )
 
 
 def filter_blocks(
     blocks_df: pd.DataFrame,
-    min_use_count_block= 50,
-    min_use_count_build= 10,
+    min_use_count_block=50,
+    min_use_count_build=10,
     rare_variants_thresh=0.1,
     proportion_level="block",
 ):
-    block_count_start = len(blocks_df['block'].unique())
+    block_count_start = len(blocks_df["block"].unique())
 
     merge_rare_variants(blocks_df, rare_variants_thresh, proportion_level)
-    block_count_merged_variant = len(blocks_df['merged_variant'].unique())
-    print(f"merged {block_count_start - block_count_merged_variant} rare blocks variants (thresh: <{rare_variants_thresh})")
+    block_count_merged_variant = len(blocks_df["merged_variant"].unique())
+    print(
+        f"merged {block_count_start - block_count_merged_variant} rare blocks variants (thresh: <{rare_variants_thresh})"
+    )
 
     blocks_df["new_block"] = blocks_df["merged_variant"].apply(normalize_block)
-    block_count_normalized = len(blocks_df['new_block'].unique())
-    print(f"merged {block_count_merged_variant - block_count_normalized} blocks by normalizing variants & base blocks")
+    block_count_normalized = len(blocks_df["new_block"].unique())
+    print(
+        f"merged {block_count_merged_variant - block_count_normalized} blocks by normalizing variants & base blocks"
+    )
 
     remove_rare_blocks(blocks_df, min_use_count_build, min_use_count_block)
-    block_count_end = len(blocks_df['new_block'].unique())
+    block_count_end = len(blocks_df["new_block"].unique())
     print(f"removed {block_count_normalized - block_count_end} rare blocks.")
-
 
     print(f"Initial block palette size: {block_count_start}")
     print(f"Final block palette size  : {block_count_end}")

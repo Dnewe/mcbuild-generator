@@ -7,7 +7,7 @@ from mcbuild_generator.utils.args import get_config
 from mcbuild_generator.constants.paths import MODEL_FP
 
 
-def pipeline_processing(config, model_config):
+def pipeline_validation(config, model_config):
     """
     Validation pipeline
     """
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     config = get_config()
 
     # run
-    pipeline_processing(config["validation"], config["training"]["model"])  # type: ignore
+    pipeline_validation(config["validation"], config["training"]["model"])  # type: ignore

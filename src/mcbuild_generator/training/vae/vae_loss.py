@@ -65,4 +65,6 @@ def get_vaeloss(ce_blocks, ce_blocks_weight, kl_start, kl_end, kl_anneal_step):
     block_count = len(idx_to_block)
     ce_blocks_idx = [block_to_idx[f"minecraft:{b}"] for b in ce_blocks]
 
-    return VAELoss(block_count, ce_blocks_idx, ce_blocks_weight, kl_start, kl_end, kl_anneal_step)
+    return VAELoss(
+        block_count, ce_blocks_idx, ce_blocks_weight, kl_start, kl_end, kl_anneal_step
+    )

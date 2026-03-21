@@ -68,7 +68,7 @@ def filter_outliers(df: pd.DataFrame, columns: List[str], coeffs: List[float]):
         print(
             f"- Outliers {col}: thresh= {thresholds[col]:.2f} ; removed= {previous_count - len(df_filtered)}"
         )
-    
+
     print(f"removed {len(df) - len(df_filtered)} outlier builds")
     return df_filtered
 
@@ -112,7 +112,7 @@ def filter_builds(
         columns=outliers_cols,
         coeffs=outliers_thresh_coeff,
     )
-    
+
     metadata_df_filtered = filter_outofbonds(
         metadata_df_filtered, min_w, min_l, min_h, max_w, max_l, max_h
     )
