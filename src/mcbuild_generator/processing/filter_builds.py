@@ -1,31 +1,8 @@
 import pandas as pd
-from typing import List
+from typing import List, Dict
+from tqdm import tqdm
 
-
-def filter_outliers(df: pd.DataFrame, columns: List[str], coeffs: List[float]):
-    """
-    Return DF without outliers for the specified column var using Median Absolute Deviation (MAD)
-    threshold = `coeff` * 1.4826 * MAD
-    """
-    df_filtered = df.copy()
-    thresholds = {}
-    for col, coeff in zip(columns, coeffs):
-        vol_median = df_filtered[col].median()
-        MAD = (df_filtered[col] - vol_median).abs().median()
-
-        thresholds[col] = coeff * 1.4826 * MAD
-
-    for col in columns:
-        previous_count = len(df_filtered)
-        df_filtered = df_filtered[
-            (df_filtered[col] - vol_median).abs() <= thresholds[col]
-        ]
-        print(
-            f"- Outliers {col}: thresh= {thresholds[col]:.2f} ; removed= {previous_count - len(df_filtered)}"
-        )
-
-    print(f"removed {len(df) - len(df_filtered)} outlier builds")
-    return df_filtered
+from mcbuild_generator.processing.schem import Schem
 
 
 def filter_outofbonds(df: pd.DataFrame, min_w, min_l, min_h, max_w, max_l, max_h):
@@ -43,11 +20,54 @@ def filter_outofbonds(df: pd.DataFrame, min_w, min_l, min_h, max_w, max_l, max_h
     return df_filtered
 
 
+def filter_outliers(df: pd.DataFrame, cols_thresh: Dict[str,float]):
+    """
+    Return DF without outliers for the specified column var using Median Absolute Deviation (MAD)
+    threshold = `coeff` * 1.4826 * MAD
+    """
+    df_filtered = df.copy()
+    thresholds = {}
+    for col, coeff in cols_thresh.items():
+        vol_median = df_filtered[col].median()
+        MAD = (df_filtered[col] - vol_median).abs().median()
+
+        thresholds[col] = coeff * 1.4826 * MAD
+
+    for col in cols_thresh.keys():
+        previous_count = len(df_filtered)
+        df_filtered = df_filtered[
+            (df_filtered[col] - vol_median).abs() <= thresholds[col]
+        ]
+        print(
+            f"- Outliers {col}: thresh= {thresholds[col]:.2f} ; removed= {previous_count - len(df_filtered)}"
+        )
+
+    print(f"removed {len(df) - len(df_filtered)} outlier builds")
+    return df_filtered
+
+
+def filter_irrelevant_builds(df: pd.DataFrame, relevant_blocks: List[str]):
+    """
+    Filter builds without any relevant blocks.
+    (relevant block list at data/09_external/relevant_blocks.json)
+    """
+    mask = []
+
+    for fp in tqdm(df["filepath"], desc="filtering irrelevant builds"):
+        schem = Schem.load(fp)
+        palette_base_block = [b.split('[')[0] for b in schem.palette.keys()]
+        mask.append(not set(palette_base_block).isdisjoint(relevant_blocks))
+
+    df_filtered = df[mask].copy()
+    print(f"removed {len(df) - len(df_filtered)} irrelevant builds")
+    return df_filtered
+
+
 def filter_builds(
     metadata_df: pd.DataFrame,
     max_files: int,
-    outliers_cols: List[str],
-    outliers_thresh_coeff: List[float],
+    outlier_cols_thresh: Dict[str,float],
+    relevant_blocks: List[str],
     min_w=0,
     min_l=0,
     min_h=0,
@@ -58,18 +78,27 @@ def filter_builds(
     """
     Filter data by removing outliers and out of bonds builds
     """
+    metadata_df_filtered = metadata_df.copy()
+    # outliers
     metadata_df_filtered = filter_outliers(
-        metadata_df,
-        columns=outliers_cols,
-        coeffs=outliers_thresh_coeff,
+        metadata_df_filtered,
+        cols_thresh=outlier_cols_thresh
     )
 
+    # out of bonds
     metadata_df_filtered = filter_outofbonds(
         metadata_df_filtered, min_w, min_l, min_h, max_w, max_l, max_h
     )
+
+    # irrelevant
+    metadata_df_filtered = filter_irrelevant_builds(
+        metadata_df_filtered, relevant_blocks
+    )  
+
+    # max files
     if max_files > 0 and len(metadata_df_filtered) > max_files:
         print(
-            f"\nRemoving excess files (current= {len(metadata_df_filtered)}, max_files= {max_files})"
+            f"\nremoving excess files (current= {len(metadata_df_filtered)}, max_files= {max_files})"
         )
         metadata_df_filtered = metadata_df_filtered[:max_files]
 

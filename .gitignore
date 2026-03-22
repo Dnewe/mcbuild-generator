@@ -19,5 +19,6 @@ wheels/
 *.pt
 *.pth
 *.txt
+*.h5
 
 # Cache

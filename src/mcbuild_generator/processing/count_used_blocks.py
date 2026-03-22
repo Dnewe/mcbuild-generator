@@ -6,7 +6,7 @@ import pandas as pd
 from mcbuild_generator.processing.schem import Schem
 
 
-def get_all_blocks(all_blocks):
+def get_all_blocks(all_blocks: Dict):
     """
     Returns a list of unique block names in format: minecraft:block[variants...]
     eg: minecraft:air, minecraft:torch[lit=true], minecraft:furnace[facing=east,lit=false]
@@ -15,9 +15,9 @@ def get_all_blocks(all_blocks):
     for block, data in all_blocks.items():
         if "variants" in data.keys() and len(data["variants"]) > 1:
             for variant in data["variants"].keys():
-                block_names.append(f"{block}[{variant}]")
+                block_names.append(f"minecraft:{block}[{variant}]")
         else:
-            block_names.append(block)
+            block_names.append(f"minecraft:{block}")
     return block_names
 
 
@@ -74,7 +74,7 @@ def count_used_blocks(builds_fp: List[str], multiproc=True) -> pd.DataFrame:
 
     with Pool(processes) as pool:
         results = list(
-            tqdm(pool.imap_unordered(process_build, builds_fp), total=len(builds_fp))
+            tqdm(pool.imap_unordered(process_build, builds_fp), total=len(builds_fp), desc="counting")
         )
     counts = list(merge_lists(results).values())
 
