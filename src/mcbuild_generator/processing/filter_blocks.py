@@ -32,6 +32,21 @@ def replace_block(block: str) -> str:
     Replace irrelevant blocks with a different one.
     eg.: minecraft:infested_stone -> minecraft:stone
     """
+    # old version blocks -> new block
+    block = _replace_block(block, "flowing_water", "water[level=0]")
+    block = _replace_block(block, "flowing_lava", "lava[level=0]")
+    block = _replace_block(block, "dead_shrub", "dead_bush")
+    block = _replace_block(block, "grass_path", "dirt_path")
+    block = _replace_block(block, "short_grass", "grass")
+    block = block.replace("wooden_slab", "oak_slab")
+    block = block.replace(":skull", ":skeleton_skull")
+    block = block.replace(":wall_skull", ":skeleton_wall_skull")
+    block = block.replace(":sign", ":oak_sign")
+    block = block.replace(":wall_sign", ":oak_wall_sign")
+    block = block.replace(":bed[", ":red_bed[") # '[' to not include bedrock, ':' to not include other beds
+    block = block.replace(":banner", ":white_banner") # ':' to not include other banners
+    block = block.replace(":wall_banner", ":white_wall_banner")
+
     # light block -> air
     block = _replace_block(block, "light")  # light[ to ensure it is not light_cyan...
 
@@ -39,6 +54,7 @@ def replace_block(block: str) -> str:
     block = _replace_block(block, "structure_block")
     block = _replace_block(block, "structure_void")
     block = _replace_block(block, "barrier")
+    block = _replace_block(block, "command_block")
 
     # redstone related blocks -> air
     block = _replace_block(block, "tripwire_hook")

@@ -35,7 +35,7 @@ def extract_builds_data(builds: List[Dict[str, str]], multiproc=True):
     rows = []
     processes = cpu_count() - 2 if multiproc else 1
     with Pool(processes=processes) as pool:
-        for row in tqdm(pool.imap_unordered(process_build, builds), total=len(builds)):
+        for row in tqdm(pool.imap_unordered(process_build, builds), total=len(builds), desc="extracting"):
             if row is not None:
                 rows.append(row)
 

@@ -41,6 +41,7 @@ def transform_data(out_dir, builds_fp: List[str], block_to_idx, multiproc=True):
     processes = cpu_count() - 2 if multiproc else 1
     with Pool(processes) as p:
         for _ in tqdm(
-            p.imap_unordered(convert_schem_partial, builds_fp), total=len(builds_fp)
+            p.imap_unordered(convert_schem_partial, builds_fp), total=len(builds_fp),
+            desc="transforming"
         ):
             pass  # unload tqdm iterator

@@ -4,6 +4,7 @@
 
 BUILDS_DIR = "data/01_raw/schem"
 ALL_BLOCKS_JSON = "data/09_external/all_blocks.json"
+RELEVANT_BLOCKS_JSON = "data/09_external/relevant_blocks.json"
 
 # -----------
 # GENERATED

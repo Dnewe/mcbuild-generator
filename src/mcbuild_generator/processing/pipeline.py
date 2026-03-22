@@ -15,6 +15,7 @@ from mcbuild_generator.constants.paths import (
     TRAIN_PROCESSED_BUILDS_DIR,
     BLOCK_TO_IDX_JSON,
     IDX_TO_BLOCK_JSON,
+    RELEVANT_BLOCKS_JSON,
 )
 
 
@@ -30,7 +31,12 @@ def pipeline_processing(config):
         filtered_builds_fp = list(read_json(CLEAN_BUILDS_FP_JSON))
     else:
         print("\nFiltering builds...")
-        filtered_builds_fp = filter_builds(builds_metadata_df, **config["build_filter"])
+        relevant_blocks = list(read_json(RELEVANT_BLOCKS_JSON))
+        filtered_builds_fp = filter_builds(
+            builds_metadata_df,
+            relevant_blocks=relevant_blocks,
+            **config["build_filter"],
+        )
         write_json(CLEAN_BUILDS_FP_JSON, filtered_builds_fp)  # save for cache
 
     # count used blocks

@@ -16,19 +16,18 @@ extraction:
 
 ### PROCESSING PIPELINE
 processing:
-  use_cache: True
+  use_cache: False
   multiprocessing: True
 
   build_filter:
     max_files: -1   # maximum number of files after cleaning (-1: not limit)
-    outliers_cols: []  # "volume", "width", "length", "height", "palettemax"
-    outliers_thresh_coeff: []  #
+    outlier_cols_thresh: {}  # "volume", "width", "length", "height", "palettemax"
     min_w: 16
     min_h: 16
     min_l: 16
-    max_w: 64
-    max_h: 64
-    max_l: 64
+    max_w: 80
+    max_h: 80
+    max_l: 80
 
   block_filter:
     min_use_count_block: 100 

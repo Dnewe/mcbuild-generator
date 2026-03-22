@@ -7,7 +7,7 @@ from mcbuild_generator.validation.create_schematic import create_schematic
 def reconstruct_builds(out_dir, model, data_dir, idx_to_block, device, n_builds=8):
     _, val_dataset = get_dataset(data_dir)
 
-    for i in tqdm(range(n_builds)):
+    for i in tqdm(range(n_builds), desc="reconstructing"):
         x = val_dataset[i].to(device)  # type: ignore
         out = model.reconstruct(x, device=device)
 
