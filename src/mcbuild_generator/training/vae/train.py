@@ -24,13 +24,15 @@ def train(
 
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
-    train_losses = []
-    val_losses = []
+    train_losses = {"loss": [], "ce": [], "kl": []}
+    val_losses = {"loss": [], "ce": [], "kl": []}
     best_loss = np.inf
 
     for epoch in range(epochs):
         model.train()
         total_loss = 0
+        total_ce = 0
+        total_kl = 0
         tqdm_loader = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{epochs}")
 
         for x_list in tqdm_loader:
@@ -49,7 +51,9 @@ def train(
 
             criterion.step()
 
-            total_loss += loss.item()  # type: ignore
+            total_loss += loss.item()
+            total_ce += ce_loss.item()
+            total_kl += kl_loss.item()
             tqdm_loader.set_postfix(
                 {
                     "loss": loss.item(),  # type: ignore
@@ -59,14 +63,20 @@ def train(
             )
 
         avg_train_loss = total_loss / len(train_loader.dataset)  # type: ignore
-        avg_val_loss = evaluate_model(model, criterion, val_loader, device, use_amp)
+        avg_train_ce = total_ce / len(train_loader.dataset)  # type: ignore
+        avg_train_kl = total_kl / len(train_loader.dataset)  # type: ignore
+        avg_val_loss, avg_val_ce, avg_val_kl = evaluate_model(model, criterion, val_loader, device, use_amp)
 
         print(
             f"[{epoch + 1}/{epochs}]: train_loss= {avg_train_loss:.3f} | val_loss= {avg_val_loss:.3f}"
         )
 
-        train_losses.append(avg_train_loss)
-        val_losses.append(avg_val_loss)
+        train_losses["loss"].append(avg_train_loss)
+        train_losses["ce"].append(avg_train_ce)
+        train_losses["kl"].append(avg_train_kl)
+        val_losses["loss"].append(avg_val_loss)
+        val_losses["ce"].append(avg_val_ce)
+        val_losses["kl"].append(avg_val_kl)
 
         if avg_val_loss < best_loss:
             torch.save(model.state_dict(), save_model_fp)
@@ -77,15 +87,21 @@ def train(
 def evaluate_model(model: VAE, criterion: VAELoss, loader, device, use_amp):
     model.eval()
     total_loss = 0
+    total_ce = 0
+    total_kl = 0
     with torch.no_grad():
         for x_list in tqdm(loader, desc="Evaluating"):
             x_list = [x.to(device) for x in x_list]
 
             with torch.autocast("cuda", enabled=use_amp):
                 recon_x_list, mu_list, logvar_list = model(x_list)
-                loss, _, _ = criterion(recon_x_list, x_list, mu_list, logvar_list)
+                loss, ce_loss, kl_loss = criterion(recon_x_list, x_list, mu_list, logvar_list)
 
             total_loss += loss.item()  # type: ignore
+            total_ce += ce_loss.item()
+            total_kl += kl_loss.item()
 
     avg_loss = total_loss / len(loader.dataset)
-    return avg_loss
+    avg_ce = total_ce / len(loader.dataset)
+    avg_kl = total_kl / len(loader.dataset)
+    return avg_loss, avg_ce, avg_kl

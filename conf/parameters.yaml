@@ -45,13 +45,13 @@ training:
 
   model:
     use_pretrained: False
-    pretrained_fp: ''
+    pretrained_fp: '/kaggle/working/model.pth'
     latent_channels: 64
     embed_dim: 32
     pad_block: 'minecraft:air'
   
   loss:
-    ce_block_weights: {"air":0.1, "dirt":0.1, "sand":0.1, "water[level=0]":0.1, "stone":0.5, "diorite":0.1, "andesite":0.1, "granite":0.1}
+    ce_block_weights: {"air":0.1, "dirt":0.1, "grass_block":0.1, "sand":0.1, "water[level=0]":0.1, "stone":0.5, "diorite":0.1, "andesite":0.1, "granite":0.1}
     kl_start: 0.0 
     kl_end: 1.0
     kl_anneal_step: 5000

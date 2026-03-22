@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+from typing import Dict,List
 
 sns.set_theme()
 
 
-def plot_losses(train_losses, val_losses, save_fp: str, show=True):
+def plot_losses(train_losses: Dict[str,List], val_losses: Dict[str,List], save_fp: str, show=True):
     """
     Plot the training and validation loss across epochs.
 
@@ -12,8 +13,10 @@ def plot_losses(train_losses, val_losses, save_fp: str, show=True):
     - val_losses: List of validation losses per epoch.
     """
     plt.figure(figsize=(8, 5))
-    plt.plot(train_losses, label="Training Loss", marker="o")
-    plt.plot(val_losses, label="Validation Loss", marker="s")
+    for k,v in train_losses.items():
+        plt.plot(v, label=f"Train {k}", marker="o")
+    for k,v in val_losses.items():
+        plt.plot(v, label=f"Val {k}", marker="o")
 
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
