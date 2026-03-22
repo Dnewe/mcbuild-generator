@@ -3,8 +3,6 @@ import torch
 import os
 from typing import List
 
-from mcbuild_generator.constants.paths import PROCESSED_BUILDS_DIR
-
 
 class BuildDataset(Dataset):
     def __init__(self, filepaths) -> None:
@@ -25,10 +23,10 @@ def custom_collate_fn(batch):
     return list(batch)
 
 
-def get_dataset(train_val_split: List[float] = [0.8, 0.2]):
+def get_dataset(data_dir: str, train_val_split: List[float] = [0.8, 0.2]):
     filepaths = [
-        os.path.join(PROCESSED_BUILDS_DIR, fn)
-        for fn in os.listdir(PROCESSED_BUILDS_DIR)
+        os.path.join(data_dir, fn)
+        for fn in os.listdir(data_dir)
         if fn.split(".")[-1] == "pt"
     ]
     dataset = BuildDataset(filepaths)
@@ -37,8 +35,11 @@ def get_dataset(train_val_split: List[float] = [0.8, 0.2]):
     return train_dataset, val_dataset
 
 
-def get_loaders(train_val_split: List[float], batch_size: int, num_workers: int = 0):
-    train_dataset, val_dataset = get_dataset(train_val_split)
+def get_loaders(
+    data_dir: str, train_val_split: List[float], batch_size: int, num_workers: int = 0
+):
+    """Create train and validation dataloaders."""
+    train_dataset, val_dataset = get_dataset(data_dir, train_val_split)
 
     train_loader = DataLoader(
         dataset=train_dataset,

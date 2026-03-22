@@ -1,14 +1,9 @@
-import os
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 from typing import List, Dict
 import pandas as pd
 
-from mcbuild_generator.utils.fs_io import write_csv
 from mcbuild_generator.processing.schem import Schem
-from mcbuild_generator.constants.paths import (
-    BLOCKS_COUNT_CSV,
-)
 
 
 def get_all_blocks(all_blocks):
@@ -70,15 +65,10 @@ def merge_lists(
     return merged
 
 
-def count_used_blocks(
-    builds_fp: List[str], use_cache=False, multiproc=True
-) -> pd.DataFrame:
+def count_used_blocks(builds_fp: List[str], multiproc=True) -> pd.DataFrame:
     """
     For each filtered build, count occurence of blocks in palette and total use in build.
     """
-    if use_cache and os.path.isfile(BLOCKS_COUNT_CSV):
-        return pd.read_csv(BLOCKS_COUNT_CSV)
-
     counts = []
     processes = cpu_count() - 2 if multiproc else 1
 
@@ -86,8 +76,6 @@ def count_used_blocks(
         results = list(
             tqdm(pool.imap_unordered(process_build, builds_fp), total=len(builds_fp))
         )
-
     counts = list(merge_lists(results).values())
-    write_csv(BLOCKS_COUNT_CSV, counts)
 
     return pd.DataFrame(counts)

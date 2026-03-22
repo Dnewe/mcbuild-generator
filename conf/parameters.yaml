@@ -49,10 +49,10 @@ training:
     pretrained_fp: ''
     latent_channels: 64
     embed_dim: 64
+    pad_block: 'minecraft:air'
   
   loss:
-    ce_blocks: ["air", "dirt", "sand", "water[level=0]", "stone", "diorite", "andesite", "granite"]
-    ce_blocks_weight: [0.05, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    ce_block_weights: {"air":0.1, "dirt":0.2, "sand":0.2, "water[level=0]":0.2, "stone":0.2, "diorite":0.1, "andesite":0.1, "granite":0.1}
     kl_start: 0.0 
     kl_end: 1.0
     kl_anneal_step: 5000
@@ -64,4 +64,8 @@ training:
 
 ### VALIDATION PIPELINE
 validation:
-  []
+  generate:
+    n_builds: 8
+
+  reconstruct:
+    n_builds: 8

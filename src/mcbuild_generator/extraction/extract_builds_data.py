@@ -1,13 +1,9 @@
-import os
 from tqdm import tqdm
 from typing import Dict, List
 from multiprocessing import Pool, cpu_count
+import pandas as pd
 
 from mcbuild_generator.processing.schem import Schem
-from mcbuild_generator.utils.fs_io import write_csv
-from mcbuild_generator.constants.paths import (
-    BUILDS_METADATA_CSV,
-)
 
 
 def process_build(build: Dict[str, str]):
@@ -32,17 +28,15 @@ def process_build(build: Dict[str, str]):
     }
 
 
-def extract_builds_data(builds: List[Dict[str, str]], multiproc=True, use_cache=True):
+def extract_builds_data(builds: List[Dict[str, str]], multiproc=True):
     """
     Extract metadata of builds schem files.
     """
-    if use_cache and os.path.isfile(BUILDS_METADATA_CSV):
-        return
-
     rows = []
     processes = cpu_count() - 2 if multiproc else 1
     with Pool(processes=processes) as pool:
         for row in tqdm(pool.imap_unordered(process_build, builds), total=len(builds)):
             if row is not None:
                 rows.append(row)
-    write_csv(BUILDS_METADATA_CSV, rows)
+
+    return pd.DataFrame(rows)

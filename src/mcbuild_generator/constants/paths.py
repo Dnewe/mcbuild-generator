@@ -22,7 +22,8 @@ BLOCK_TO_IDX_JSON = "data/03_processed/block_to_idx.json"
 IDX_TO_BLOCK_JSON = "data/03_processed/idx_to_block.json"
 
 ### PROCESSED BUILDS
-PROCESSED_BUILDS_DIR = "data/03_processed/builds"
+TRAIN_PROCESSED_BUILDS_DIR = "data/03_processed/builds"
+TEST_PROCESSED_BUILDS_DIR = "data/03_processed/builds"
 
 ### TRAINING
 MODEL_FP = "data/05_models/model.pth"

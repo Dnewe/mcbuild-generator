@@ -1,50 +1,5 @@
-import os
 import pandas as pd
-from tqdm import tqdm
-from typing import List, Dict
-from multiprocessing import Pool, cpu_count
-
-from mcbuild_generator.processing.schem import Schem
-from mcbuild_generator.utils.fs_io import write_csv, read_json, write_json
-from mcbuild_generator.constants.paths import (
-    BUILDS_METADATA_CSV,
-    CLEAN_BUILDS_FP_JSON,
-)
-
-
-def process_build(build: Dict[str, str]):
-    id_ = build["id"]
-    fp = build["filepath"]
-    try:
-        schem = Schem.load(fp)
-    except Exception as e:
-        print(f"Failed loading Schem file {fp}. \nerror: {e}")
-        return None
-
-    return {
-        "id": str(id_),
-        "filepath": str(fp),
-        "version": int(schem.version),
-        "dataversion": int(schem.dataversion),
-        "height": int(schem.height),
-        "length": int(schem.length),
-        "width": int(schem.width),
-        "volume": int(schem.height * schem.length * schem.width),
-        "palettemax": int(schem.palettemax),
-    }
-
-
-def extract_metadata(builds: List[Dict[str, str]], multiproc=True):
-    """
-    Extract metadata of builds schem files.
-    """
-    rows = []
-    processes = cpu_count() - 2 if multiproc else 1
-    with Pool(processes=processes) as pool:
-        for row in tqdm(pool.imap_unordered(process_build, builds), total=len(builds)):
-            if row is not None:
-                rows.append(row)
-    write_csv(BUILDS_METADATA_CSV, rows)
+from typing import List
 
 
 def filter_outliers(df: pd.DataFrame, columns: List[str], coeffs: List[float]):
@@ -99,14 +54,10 @@ def filter_builds(
     max_w=256,
     max_l=256,
     max_h=256,
-    use_cache=True,
 ) -> List[str]:
     """
-    Clean data by removing outliers
+    Filter data by removing outliers and out of bonds builds
     """
-    if use_cache and os.path.isfile(CLEAN_BUILDS_FP_JSON):
-        return list(read_json(CLEAN_BUILDS_FP_JSON))
-
     metadata_df_filtered = filter_outliers(
         metadata_df,
         columns=outliers_cols,
@@ -128,7 +79,4 @@ def filter_builds(
     print(f"Final build count: {end_build_count}")
     print(f"-> removed {start_build_count - end_build_count} builds")
 
-    clean_builds_fp = metadata_df_filtered["filepath"].to_list()
-    write_json(CLEAN_BUILDS_FP_JSON, clean_builds_fp)
-
-    return clean_builds_fp
+    return metadata_df_filtered["filepath"].to_list()

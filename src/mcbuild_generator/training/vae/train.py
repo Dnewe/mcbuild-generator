@@ -1,14 +1,23 @@
 import torch.optim as optim
+from torch.utils.data import DataLoader
 import torch
 from tqdm import tqdm
 import numpy as np
 
 from mcbuild_generator.training.vae.vae_loss import VAELoss
 from mcbuild_generator.training.vae.vae import VAE
-from mcbuild_generator.constants.paths import MODEL_FP
 
 
-def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, device):
+def train(
+    model: VAE,
+    criterion: VAELoss,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    save_model_fp,
+    epochs: int,
+    lr: float,
+    device,
+):
     model.to(device)
     use_amp = torch.cuda.is_available()
     scaler = torch.GradScaler(enabled=use_amp)
@@ -49,7 +58,7 @@ def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, 
                 }
             )
 
-        avg_train_loss = total_loss / len(train_loader.dataset)
+        avg_train_loss = total_loss / len(train_loader.dataset)  # type: ignore
         avg_val_loss = evaluate_model(model, criterion, val_loader, device, use_amp)
 
         print(
@@ -60,7 +69,7 @@ def train(model: VAE, criterion: VAELoss, train_loader, val_loader, epochs, lr, 
         val_losses.append(avg_val_loss)
 
         if avg_val_loss < best_loss:
-            torch.save(model.state_dict(), MODEL_FP)
+            torch.save(model.state_dict(), save_model_fp)
 
     return train_losses, val_losses
 

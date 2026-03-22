@@ -2,9 +2,6 @@ import os
 import numpy as np
 from typing import List, Dict
 
-from mcbuild_generator.utils.fs_io import write_json
-from mcbuild_generator.constants.paths import RAW_BUILDS_FP_JSON
-
 
 def get_row(dir, fn):
     _id = fn.split(".")[0]
@@ -35,7 +32,4 @@ def extract_filepaths(
     if max_files > 0 and max_files < len(filenames):
         filenames = filenames[:max_files]
 
-    builds_fp = [get_row(datadir, fn) for fn in filenames]
-    write_json(RAW_BUILDS_FP_JSON, builds_fp)
-
-    return builds_fp
+    return [get_row(datadir, fn) for fn in filenames]

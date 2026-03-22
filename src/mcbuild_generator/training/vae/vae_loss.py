@@ -1,23 +1,19 @@
 import torch.nn.functional as F
 import torch
 
-from mcbuild_generator.utils.fs_io import read_json
-from mcbuild_generator.constants.paths import BLOCK_TO_IDX_JSON, IDX_TO_BLOCK_JSON
-
 
 class VAELoss(torch.nn.Module):
     def __init__(
         self,
         block_count,
-        ce_blocks_idx=[],
-        ce_blocks_w=[],
+        ce_block_weights={},
         kl_start=0.0,
         kl_end=1.0,
         kl_anneal_steps=5000,
     ) -> None:
         super().__init__()
         ce_weights = torch.ones(block_count)
-        for idx, w in zip(ce_blocks_idx, ce_blocks_w):
+        for idx, w in ce_block_weights.items():
             ce_weights[idx] = w
         self.register_buffer("ce_weights", ce_weights)
 
@@ -55,16 +51,13 @@ class VAELoss(torch.nn.Module):
         return ce_loss + self.kl_weight * kl_loss, ce_loss, kl_loss
 
 
-def get_vaeloss(ce_blocks, ce_blocks_weight, kl_start, kl_end, kl_anneal_step):
-    """
-    Get VAELoss object by retrieving parameters values in JSON files.
-    """
-    idx_to_block = dict(read_json(IDX_TO_BLOCK_JSON))
-    block_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
-
+def get_vaeloss(
+    block_to_idx, idx_to_block, ce_block_weights, kl_start, kl_end, kl_anneal_step
+) -> VAELoss:
+    """Get VAELoss object."""
     block_count = len(idx_to_block)
-    ce_blocks_idx = [block_to_idx[f"minecraft:{b}"] for b in ce_blocks]
+    ce_block_weights = {
+        block_to_idx[f"minecraft:{b}"]: w for b, w in ce_block_weights.items()
+    }
 
-    return VAELoss(
-        block_count, ce_blocks_idx, ce_blocks_weight, kl_start, kl_end, kl_anneal_step
-    )
+    return VAELoss(block_count, ce_block_weights, kl_start, kl_end, kl_anneal_step)

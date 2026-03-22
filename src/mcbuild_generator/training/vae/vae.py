@@ -1,9 +1,7 @@
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-from mcbuild_generator.utils.fs_io import read_json
-from mcbuild_generator.constants.paths import BLOCK_TO_IDX_JSON, IDX_TO_BLOCK_JSON
 
 
 class ResBlock(nn.Module):
@@ -134,14 +132,23 @@ class VAE(nn.Module):
         return block_ids
 
 
-def get_model(embed_dim, latent_channels, use_pretrained, pretrained_fp, device):
-    idx_to_block = dict(read_json(IDX_TO_BLOCK_JSON))
-    block_to_idx = dict(read_json(BLOCK_TO_IDX_JSON))
+def get_model(
+    block_to_idx,
+    idx_to_block,
+    embed_dim: int,
+    latent_channels: int,
+    pad_block: str,
+    use_pretrained: bool,
+    pretrained_fp: str,
+    device,
+) -> VAE:
+    """Get model object"""
     block_count = len(idx_to_block)
-    air_index = block_to_idx["minecraft:air"]
+    pad_value = block_to_idx[pad_block]
 
-    vae = VAE(block_count, air_index, embed_dim, latent_channels).to(device)
-    if use_pretrained:
+    vae = VAE(block_count, pad_value, embed_dim, latent_channels).to(device)
+    if use_pretrained and os.path.isfile(pretrained_fp):
+        print(f"using pretrained model '{os.path.basename(pretrained_fp)}'")
         vae.load_state_dict(torch.load(pretrained_fp, map_location=device))
 
     return vae

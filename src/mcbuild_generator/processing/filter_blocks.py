@@ -189,6 +189,9 @@ def filter_blocks(
     rare_variants_thresh=0.1,
     proportion_level="block",
 ):
+    """
+    Reduces block palette size by filtering rare/irrelevant blocks
+    """
     block_count_start = len(blocks_df["block"].unique())
 
     merge_rare_variants(blocks_df, rare_variants_thresh, proportion_level)
