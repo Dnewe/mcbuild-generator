@@ -43,8 +43,12 @@ def replace_block(block: str) -> str:
     block = block.replace(":wall_skull", ":skeleton_wall_skull")
     block = block.replace(":sign", ":oak_sign")
     block = block.replace(":wall_sign", ":oak_wall_sign")
-    block = block.replace(":bed[", ":red_bed[") # '[' to not include bedrock, ':' to not include other beds
-    block = block.replace(":banner", ":white_banner") # ':' to not include other banners
+    block = block.replace(
+        ":bed[", ":red_bed["
+    )  # '[' to not include bedrock, ':' to not include other beds
+    block = block.replace(
+        ":banner", ":white_banner"
+    )  # ':' to not include other banners
     block = block.replace(":wall_banner", ":white_wall_banner")
 
     # light block -> air

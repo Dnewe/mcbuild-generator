@@ -32,5 +32,10 @@ def idx_to_block_json():
 
 
 @pytest.fixture(scope="module")
+def relevant_blocks_json():
+    return "data/09_external/relevant_blocks.json"
+
+
+@pytest.fixture(scope="module")
 def processed_dir():
     return "data/03_processed/builds_pytest"
