@@ -6,20 +6,29 @@ from mcbuild_generator.processing.filter_blocks import filter_blocks
 from mcbuild_generator.processing.transform_data import transform_data
 from mcbuild_generator.processing.count_used_blocks import count_used_blocks
 from mcbuild_generator.processing.index_block import index_block
-from mcbuild_generator.utils.fs_io import write_json
+from mcbuild_generator.utils.fs_io import write_json, read_json
 
 
 def test_pipeline_processing(
-    config, metadata_csv, idx_to_block_json, block_to_idx_json, processed_dir
+    config,
+    metadata_csv,
+    idx_to_block_json,
+    block_to_idx_json,
+    processed_dir,
+    relevant_blocks_json,
 ):
     """
     Data processing pipeline
     """
     builds_metadata_df = pd.read_csv(metadata_csv)
+    relevant_blocks = list(read_json(relevant_blocks_json))
 
     # filter builds
     print("\nFiltering builds...")
-    filtered_builds_fp = filter_builds(builds_metadata_df, **config["build_filter"])
+
+    filtered_builds_fp = filter_builds(
+        builds_metadata_df, relevant_blocks, **config["build_filter"]
+    )
 
     # test
 

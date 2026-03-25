@@ -20,7 +20,7 @@ def filter_outofbonds(df: pd.DataFrame, min_w, min_l, min_h, max_w, max_l, max_h
     return df_filtered
 
 
-def filter_outliers(df: pd.DataFrame, cols_thresh: Dict[str,float]):
+def filter_outliers(df: pd.DataFrame, cols_thresh: Dict[str, float]):
     """
     Return DF without outliers for the specified column var using Median Absolute Deviation (MAD)
     threshold = `coeff` * 1.4826 * MAD
@@ -55,7 +55,7 @@ def filter_irrelevant_builds(df: pd.DataFrame, relevant_blocks: List[str]):
 
     for fp in tqdm(df["filepath"], desc="filtering irrelevant builds"):
         schem = Schem.load(fp)
-        palette_base_block = [b.split('[')[0] for b in schem.palette.keys()]
+        palette_base_block = [b.split("[")[0] for b in schem.palette.keys()]
         mask.append(not set(palette_base_block).isdisjoint(relevant_blocks))
 
     df_filtered = df[mask].copy()
@@ -65,9 +65,9 @@ def filter_irrelevant_builds(df: pd.DataFrame, relevant_blocks: List[str]):
 
 def filter_builds(
     metadata_df: pd.DataFrame,
-    max_files: int,
-    outlier_cols_thresh: Dict[str,float],
     relevant_blocks: List[str],
+    max_files: int,
+    outlier_cols_thresh: Dict[str, float],
     min_w=0,
     min_l=0,
     min_h=0,
@@ -81,8 +81,7 @@ def filter_builds(
     metadata_df_filtered = metadata_df.copy()
     # outliers
     metadata_df_filtered = filter_outliers(
-        metadata_df_filtered,
-        cols_thresh=outlier_cols_thresh
+        metadata_df_filtered, cols_thresh=outlier_cols_thresh
     )
 
     # out of bonds
@@ -93,7 +92,7 @@ def filter_builds(
     # irrelevant
     metadata_df_filtered = filter_irrelevant_builds(
         metadata_df_filtered, relevant_blocks
-    )  
+    )
 
     # max files
     if max_files > 0 and len(metadata_df_filtered) > max_files:

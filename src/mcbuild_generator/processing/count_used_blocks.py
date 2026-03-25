@@ -74,7 +74,11 @@ def count_used_blocks(builds_fp: List[str], multiproc=True) -> pd.DataFrame:
 
     with Pool(processes) as pool:
         results = list(
-            tqdm(pool.imap_unordered(process_build, builds_fp), total=len(builds_fp), desc="counting")
+            tqdm(
+                pool.imap_unordered(process_build, builds_fp),
+                total=len(builds_fp),
+                desc="counting",
+            )
         )
     counts = list(merge_lists(results).values())
 

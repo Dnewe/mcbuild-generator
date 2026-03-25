@@ -41,17 +41,17 @@ training:
   dataset:
     train_val_split: [0.8, 0.2]
     batch_size: 1
-    num_workers: 0
+    num_workers: 4
 
   model:
     use_pretrained: False
-    pretrained_fp: ''
+    pretrained_fp: '/kaggle/working/model.pth'
     latent_channels: 64
-    embed_dim: 64
+    embed_dim: 32
     pad_block: 'minecraft:air'
   
   loss:
-    ce_block_weights: {"air":0.1, "dirt":0.2, "sand":0.2, "water[level=0]":0.2, "stone":0.2, "diorite":0.1, "andesite":0.1, "granite":0.1}
+    ce_block_weights: {"air":0.1, "dirt":0.1, "grass_block":0.1, "sand":0.1, "water[level=0]":0.1, "stone":0.5, "diorite":0.1, "andesite":0.1, "granite":0.1}
     kl_start: 0.0 
     kl_end: 1.0
     kl_anneal_step: 5000
