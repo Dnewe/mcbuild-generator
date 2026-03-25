@@ -3,7 +3,7 @@
 
 ## Overview
 
-**Minecraft Build Generator** is a research-oriented project focused on 3D discrete voxel generation applied to Minecraft structures.
+**Minecraft Build Generator** is a personal research-oriented project focused on 3D discrete voxel generation applied to Minecraft structures.
 
 Current objectives:
 - Generate Minecraft builds from scratch
@@ -82,8 +82,6 @@ Two modes:
 Outputs are exported as `.schem` files, [loadable in Minecraft](https://modrinth.com/mod/litematica)
 
 ## Installation
-
-### Install repository
 
 This project uses [__uv__](https://docs.astral.sh/uv/) as a package and environment manager.
 
