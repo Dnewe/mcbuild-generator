@@ -7,21 +7,21 @@ run_name: 'full_max64'
 
 ### EXTRACTION PIPELINE
 extraction:
-  use_cache: True
-  multiprocessing: True
-
-  data_dir: 'data/01_raw/schem/'    # path to directory containing building files (.schem, ...)
-  max_files: -1                   # maximum number of files to extract (-1: not limit)
+  data_dir: 'data/01_raw/schem/'  # path to directory containing building files (.schem, ...)
+  max_files: -1  # maximum number of files to keep, -1: for no limit (for debugging / experiments)
+  use_cache: True  # use existing saved files if enabled
+  multiprocessing: True  # whether to use multiprocessing or not
 
 
 ### PROCESSING PIPELINE
 processing:
   use_cache: False
-  multiprocessing: True
+  multiprocessing: True 
 
   build_filter:
-    max_files: -1   # maximum number of files after cleaning (-1: not limit)
-    outlier_cols_thresh: {}  # "volume", "width", "length", "height", "palettemax"
+    max_files: -1  # maximum number of files after cleaning, -1: not limit (for debugging / experiments)
+    outlier_cols_thresh: {"volume":3, "palettemax":5}  # outliers detection MAD threshold for column in builds_metadata.csv
+    # min and max bounds of build
     min_w: 16
     min_h: 16
     min_l: 16
@@ -30,31 +30,31 @@ processing:
     max_l: 80
 
   block_filter:
-    min_use_count_block: 100 
-    min_use_count_build: 10
-    rare_variants_thresh: 0.1
-    proportion_level: 'block'
+    min_use_count_block: 100  # minimum total use of block (all variants) threshold
+    min_use_count_build: 10  # minimum count of builds with block (all variant) threshold
+    rare_variants_thresh: 0.05  # threshold for the proportion of a block variant to be merged with the most common variant
+    proportion_level: 'block'  # 'block' or 'build', with what count the proportion is computed for rare variants removal
 
 
 ### TRAINING PIPELINE
 training:
   dataset:
-    train_val_split: [0.8, 0.2]
-    batch_size: 1
-    num_workers: 4
+    train_val_split: [0.8, 0.2]  # [train prop, val prop]
+    batch_size: 1  # size of each batch of dataloaders
+    num_workers: 4  # dataloader workers
 
   model:
-    use_pretrained: False
-    pretrained_fp: '/kaggle/working/model.pth'
-    latent_channels: 64
-    embed_dim: 32
-    pad_block: 'minecraft:air'
+    use_pretrained: False  # load model at pretrained_fp if enabled
+    pretrained_fp: '/kaggle/working/model.pth'  # location of model file
+    latent_channels: 64  # number of channels in Variational Auto Encoder latent space
+    embed_dim: 32  # dimension of the embedding vectors
+    pad_block: 'minecraft:air'  # block to pad build with, if dimensions does not match expected ones
   
   loss:
-    ce_block_weights: {"air":0.1, "dirt":0.1, "grass_block":0.1, "sand":0.1, "water[level=0]":0.1, "stone":0.5, "diorite":0.1, "andesite":0.1, "granite":0.1}
-    kl_start: 0.0 
-    kl_end: 1.0
-    kl_anneal_step: 5000
+    ce_block_weights: {"air":0.1, "dirt":0.1, "grass_block":0.1, "sand":0.1, "water[level=0]":0.1, "stone":0.5, "diorite":0.1, "andesite":0.1, "granite":0.1}  # weights in cross entropy loss to apply to blocks
+    kl_start: 0.0  # kl annealing start value
+    kl_end: 1.0  # kl annealing end value
+    kl_anneal_step: 5000  # kl annealing step counts (total number of batchs)
 
   train:
     epochs: 10
