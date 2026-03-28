@@ -24,45 +24,45 @@ All parameters are centralized in `conf/parameters.yaml`.
 
 The pipeline is divided into 4 main stages:
 
-### Extraction
+### 1. Extraction
 
 - Locate and index raw `.schem` files
 - Extract metadata of `.schem` files
 
-### Processing
+### 2. Processing
 
 Transforms raw `.schem` files into clean, standardized voxel tensors.
 
-#### Build Filtering
+#### 2.1 Build Filtering
 - Size constraints (min/max dimensions)
 - Removes statistical outliers using MAD (e.g. extreme volumes)
 - Removes builds with no relevant blocks (i.e. removes builds without player-made structures)
 - Optionally limits dataset size
 
-#### Block Filtering
+#### 2.2 Block Filtering
 Reduces noise in block vocabulary
 - Removes rare blocks
 - Merges rare block variants into main variant
 - Noramlizes block representation 
 - Analyze block usage (e.g. *cake[bite=3]"* -> *cake[bite=0]*)
 
-#### Tensor Conversion
+#### 2.3 Tensor Conversion
 Each build is:
 - Converted into a **3D tensor (voxel grid)** of indexed blocks (block -> integer mapping)
 - **Cropped** to remove empty regions (air-only borders) 
 
-### Training
+### 3. Training
 
 Train a baseline **3D Variational Autoencoder** (VAE) on voxel data.
 
-#### Model
+#### 3.1 Model
 - Input: discrete voxel grids, padded if needed
 - Embedding layer for block tokens
 - Encoder with 3D convolutions and GroupNorm with leakyReLU
 - Latent Space with 3D convolutions (to keep spatial size)
 - Decoder with 3D transposed convolutions with leakyReLU
 
-#### Loss Function
+#### 3.2 Loss Function
 Combination of
 - **Cross-Entropy loss** to predict block types (discrete) 
 -**KL Divergence** to regularize latent space
@@ -71,7 +71,7 @@ A **KL annealing schedule** is used to stabilize training
 > [!NOTE]
 > Current limitation: small batch sizes due to 3D memory cost
 
-### Validation / Generation
+### 4. Validation / Generation
 
 Generates `.schem` files for qualitative evaluation in Minecraft.
 
